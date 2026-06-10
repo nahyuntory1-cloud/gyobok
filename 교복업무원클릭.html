@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>교복 업무 원클릭</title>
+<style>
+:root{--bl:#1e40af;--bl2:#3b82f6;--blbg:#eff6ff;--blbd:#dbeafe;--gr:#16a34a;--grbg:#f0fdf4;--or:#d97706;--orbg:#fffbeb;--re:#dc2626;--rebg:#fef2f2;--pu:#7c3aed;--pubg:#f5f3ff;--bd:#e2e8f0;--tx:#1e293b;--gray:#64748b;--light:#f8fafc;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Malgun Gothic","맑은 고딕",sans-serif;font-size:13px;background:var(--light);color:var(--tx);display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#topbar{background:var(--bl);color:#fff;padding:0 18px;display:flex;align-items:center;gap:10px;height:48px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+#topbar h1{font-size:16px;font-weight:800;letter-spacing:-.3px;}
+#topbar .hint{margin-left:auto;font-size:10.5px;opacity:.75;}
+#layout{display:flex;flex:1;overflow:hidden;}
+#sb{width:220px;flex-shrink:0;background:#fff;border-right:1px solid var(--bd);overflow-y:auto;}
+.ng{border-bottom:1px solid var(--bd);}
+.nh{padding:7px 12px 3px;font-size:10px;font-weight:800;color:var(--gray);letter-spacing:.5px;text-transform:uppercase;}
+.ni{display:flex;align-items:center;gap:5px;padding:6px 10px 6px 16px;cursor:pointer;font-size:12px;color:#334155;border-left:3px solid transparent;transition:all .12s;line-height:1.4;}
+.ni:hover{background:var(--blbg);color:var(--bl);}
+.ni.act{background:var(--blbg);color:var(--bl);font-weight:700;border-left-color:var(--bl);}
+.ni.sub{padding-left:26px;font-size:11.5px;color:var(--gray);}
+.ni.sub.act{color:var(--bl);font-weight:600;}
+#main{flex:1;overflow-y:auto;padding:20px 24px;}
+.sec{display:none;}
+.pt{font-size:19px;font-weight:800;color:var(--bl);margin-bottom:3px;}
+.ps{font-size:12px;color:var(--gray);margin-bottom:16px;}
+.card{background:#fff;border:1px solid var(--bd);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.ch{padding:11px 15px;background:var(--blbg);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
+.ch h3{font-size:13px;font-weight:700;color:var(--bl);}
+.ch .tog{font-size:13px;color:var(--bl);transition:transform .18s;}
+.ch.op .tog{transform:rotate(180deg);}
+.cb{padding:14px 16px;display:none;}.cb.op{display:block;}
+.ib{background:var(--blbg);border-left:4px solid var(--bl2);border-radius:0 5px 5px 0;padding:9px 12px;margin-bottom:8px;font-size:12px;line-height:1.8;}
+.wb{background:var(--orbg);border-left:4px solid var(--or);border-radius:0 5px 5px 0;padding:9px 12px;margin-bottom:8px;font-size:12px;line-height:1.8;}
+.gb{background:var(--grbg);border-left:4px solid var(--gr);border-radius:0 5px 5px 0;padding:9px 12px;margin-bottom:8px;font-size:12px;line-height:1.8;}
+.rb{background:var(--rebg);border-left:4px solid var(--re);border-radius:0 5px 5px 0;padding:9px 12px;margin-bottom:8px;font-size:12px;line-height:1.8;color:#991b1b;}
+.gt{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0;table-layout:fixed;}
+.gt th{background:#f1f5f9;padding:6px 8px;text-align:left;border:1px solid var(--bd);font-weight:700;position:relative;overflow:hidden;white-space:nowrap;}
+.gt td{padding:6px 8px;border:1px solid var(--bd);vertical-align:top;line-height:1.5;}
+.gt td[contenteditable]{outline:none;cursor:text;}
+.gt td[contenteditable]:focus{background:#fffbeb;box-shadow:inset 0 0 0 2px var(--bl2);}
+.cr{position:absolute;right:0;top:0;width:5px;height:100%;cursor:col-resize;z-index:10;user-select:none;}
+.cr:hover,.cr.drag{background:rgba(59,130,246,.4);}
+.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;}
+.ig2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px;}
+.ii label{display:block;font-size:10.5px;font-weight:700;color:var(--gray);margin-bottom:3px;}
+.ii input,.ii select,.ii textarea{width:100%;border:1px solid var(--bd);border-radius:5px;padding:7px 9px;font-size:12.5px;font-family:inherit;}
+.ii input:focus,.ii select:focus,.ii textarea:focus{outline:none;border-color:var(--bl2);box-shadow:0 0 0 2px rgba(59,130,246,.12);}
+.fw{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:18px;max-width:850px;}
+.fw h2{text-align:center;font-size:14.5px;font-weight:800;margin-bottom:12px;}
+.fw h3{font-size:12.5px;font-weight:700;color:var(--bl);margin:12px 0 5px;border-left:3px solid var(--bl);padding-left:7px;}
+.fn{background:var(--blbg);border-radius:5px;padding:7px 10px;font-size:11px;color:var(--bl);margin-bottom:10px;line-height:1.7;}
+.fsig{display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;margin-top:8px;}
+.btn{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-family:inherit;font-weight:700;transition:all .12s;}
+.bp{background:var(--bl);color:#fff;}.bp:hover{background:#1d4ed8;}
+.bg2{background:var(--gr);color:#fff;}.bg2:hover{background:#15803d;}
+.bs{background:#f1f5f9;color:#334155;border:1px solid var(--bd);}
+.brow{display:flex;gap:7px;margin-top:12px;justify-content:center;flex-wrap:wrap;}
+.faq-item{border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;overflow:hidden;}
+.faq-q{padding:11px 14px;background:var(--blbg);cursor:pointer;font-size:12.5px;font-weight:700;color:var(--bl);display:flex;justify-content:space-between;align-items:center;user-select:none;border-radius:7px;}
+.faq-q::after{content:"▼";font-size:10px;transition:transform .18s;}
+.faq-q.op::after{transform:rotate(180deg);}
+.faq-a{padding:11px 14px;font-size:12px;line-height:1.9;display:none;background:#fff;border-top:1px solid var(--bd);}
+.fq{padding:11px 14px;background:var(--blbg);cursor:pointer;font-size:12.5px;font-weight:700;color:var(--bl);display:flex;justify-content:space-between;align-items:center;user-select:none;}
+.fa{padding:11px 14px;font-size:12px;line-height:1.9;display:none;background:#fff;border-top:1px solid var(--bd);}
+.fa.op{display:block;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;}
+.mc{background:var(--blbg);border-radius:7px;padding:12px;border:1px solid var(--blbd);}
+.mc h4{font-size:12px;font-weight:700;color:var(--bl);margin-bottom:5px;}
+.mc li{font-size:11.5px;color:#334155;line-height:1.7;padding-left:12px;position:relative;}
+.mc li::before{content:"•";position:absolute;left:0;color:var(--bl2);}
+.flow-row{display:flex;gap:0;margin:14px 0;overflow-x:auto;}
+.fst{flex:1;min-width:80px;text-align:center;position:relative;}
+.fst:not(:last-child)::after{content:"▶";position:absolute;right:-7px;top:18px;color:var(--bl2);z-index:1;}
+.fsb{background:var(--bl);color:#fff;border-radius:7px;padding:10px 4px;margin:0 7px;cursor:pointer;font-size:11px;font-weight:700;line-height:1.4;transition:background .1s;}
+.fsb:hover{background:var(--bl2);}
+.fsb .fn2{font-size:9px;opacity:.7;margin-bottom:2px;}
+.fsd{font-size:10.5px;color:var(--gray);margin-top:4px;}
+.tab-bar{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.tab{padding:5px 14px;border-radius:5px 5px 0 0;border:1px solid var(--bd);background:#f1f5f9;cursor:pointer;font-size:12px;font-weight:700;color:var(--gray);border-bottom:none;}
+.tab.act{background:#fff;color:var(--bl);border-bottom:1px solid #fff;margin-bottom:-1px;z-index:1;}
+.tab-content{display:none;border:1px solid var(--bd);border-radius:0 5px 5px 5px;padding:14px;background:#fff;}
+.tab-content.act{display:block;}
+.ck-row{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px;line-height:1.6;}
+.ck-row:last-child{border-bottom:none;}
+.ck-row input[type=checkbox]{margin-top:2px;accent-color:var(--bl);flex-shrink:0;width:14px;height:14px;}
+@page{size:A4;margin:20mm 18mm;}
+@media print{
+body{height:auto!important;overflow:visible!important;}
+#topbar,#sb{display:none!important;}
+#layout{display:block!important;}
+#main{overflow:visible!important;padding:0!important;}
+.sec{display:none!important;}#print-target{display:block!important;}
+.brow,.fn,.tab-bar{display:none!important;}
+.fw{border:none!important;padding:0!important;max-width:100%!important;}
+.card{border:none!important;}.ch{background:none!important;border:none!important;}
+.ch .tog{display:none!important;}.cb{display:block!important;}
+.gt th{background:#eee!important;}.cr{display:none!important;}
+.tab-content{display:block!important;border:1px solid #ccc!important;}
+}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <h1>📋 교복 업무 원클릭</h1>
+  <span class="hint">학교·업체 기본정보 1회 입력 → 모든 서식 자동반영 | 2026년 교복 학교주관구매 가이드북</span>
+</div>
+<div id="layout">
+<nav id="sb">
+  <div class="ng">
+    <div class="nh">기본정보</div>
+    <div class="ni act" data-s="info">🏫 학교 · 업체 정보</div>
+  </div>
+  <div class="ng">
+    <div class="nh">구매 흐름</div>
+    <div class="ni" data-s="flow">📊 구매 흐름도</div>
+  </div>
+  <div class="ng">
+    <div class="nh">입찰 준비 (p.20~30)</div>
+    <div class="ni sub" data-s="base">📊 기초금액 조서</div>
+    <div class="ni sub" data-s="method">📋 계약방법 안내</div>
+    <div class="ni sub" data-s="bidtip">✏️ 입찰공고 체크리스트</div>
+    <div class="ni sub" data-s="ccheck">📝 계약체결 확인사항</div>
+  </div>
+  <div class="ng">
+    <div class="nh">입찰공고 서식 (p.80~143)</div>
+    <div class="ni sub" data-s="bid">📄 입찰공고문 (자동화)</div>
+    <div class="ni sub" data-s="eval">📊 적격업체 선정 평가표</div>
+    <div class="ni sub" data-s="special">📜 계약 특수조건</div>
+    <div class="ni sub" data-s="pubdoc">📁 공문서식 모음</div>
+  </div>
+  <div class="ng">
+    <div class="nh">입찰 서류 (업체 제출)</div>
+    <div class="ni sub" data-s="f4">📄 붙임4 입찰참가신청서</div>
+    <div class="ni sub" data-s="f5">📄 붙임5 입찰참가신고서</div>
+    <div class="ni sub" data-s="f6">📄 붙임6 납품 제안서</div>
+    <div class="ni sub" data-s="f7">📄 붙임7 납품 규격서</div>
+    <div class="ni sub" data-s="f8">📄 붙임8 시설 현황서</div>
+    <div class="ni sub" data-s="f9">📄 붙임9 단가 비율표</div>
+    <div class="ni sub" data-s="f10">📄 붙임10 A/S 계획서</div>
+    <div class="ni sub" data-s="f11">📄 붙임11 소비자불만 처리계획</div>
+    <div class="ni sub" data-s="f12">📄 붙임12 품목별 단가표</div>
+    <div class="ni sub" data-s="f13">📄 붙임13 청렴계약 이행각서</div>
+    <div class="ni sub" data-s="f14">📄 붙임14 위임장</div>
+  </div>
+  <div class="ng">
+    <div class="nh">검사 · 납품 서식</div>
+    <div class="ni sub" data-s="ck">✅ 검사·검수 체크리스트</div>
+    <div class="ni sub" data-s="dl">📦 최종 납품 확인서</div>
+    <div class="ni sub" data-s="pp">🔒 개인정보 파기 서약서</div>
+    <div class="ni sub" data-s="sv">📊 만족도 조사 설문</div>
+  </div>
+  <div class="ng">
+    <div class="nh">자주 묻는 질문</div>
+    <div class="ni" data-s="faq">❓ FAQ</div>
+  </div>
+</nav>
+<div id="main">
+
+<!-- sec-info -->
+<div id="sec-info" class="sec" style="display:block">
+<div class="pt">🏫 학교 · 업체 기본정보</div>
+<div class="ps">여기에 입력하면 모든 서식에 자동 반영됩니다.</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>🏫 학교 정보</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <div class="ib">입력한 정보는 입찰공고문·각종 서식에 자동 반영됩니다.</div>
+    <div class="ig">
+      <div class="ii"><label>학교명</label><input id="g-sn" placeholder="○○중학교" oninput="SA()"></div>
+      <div class="ii"><label>학년도</label><input id="g-yr" placeholder="2026" value="2026" oninput="SA()"></div>
+      <div class="ii"><label>학교장</label><input id="g-pr" placeholder="홍길동" oninput="SA()"></div>
+    </div>
+    <div class="ig">
+      <div class="ii"><label>주소</label><input id="g-addr" placeholder="경기도 ○○시 ○○로 00" oninput="SA()"></div>
+      <div class="ii"><label>전화번호</label><input id="g-tel" placeholder="031-000-0000" oninput="SA()"></div>
+      <div class="ii"><label>팩스번호</label><input id="g-fax" placeholder="031-000-0001" oninput="SA()"></div>
+    </div>
+    <div class="ig">
+      <div class="ii"><label>교육지원청</label><input id="g-edu" placeholder="○○교육지원청" oninput="SA()"></div>
+      <div class="ii"><label>입찰 건명</label><input id="g-bid" placeholder="2026학년도 ○○중학교 교복 구매" oninput="SA()"></div>
+      <div class="ii"><label>담당교사</label><input id="g-tc" placeholder="담당교사 이름" oninput="SA()"></div>
+    </div>
+    <div class="ig">
+      <div class="ii"><label>신입생 수(명)</label><input id="g-cnt" type="number" placeholder="100" oninput="SA()"></div>
+      <div class="ii"><label>입찰공고일</label><input id="g-bdt" type="date" oninput="SA()"></div>
+      <div class="ii"><label>납품기한(동복)</label><input id="g-ddt" type="date" oninput="SA()"></div>
+    </div>
+    <div class="ig">
+      <div class="ii"><label>납품기한(하복)</label><input id="g-ddt2" type="date" oninput="SA()"></div>
+      <div class="ii"><label>기초금액(동복, 원)</label><input id="g-base1" type="text" placeholder="230,000" oninput="numFmt(this);SA()"></div>
+      <div class="ii"><label>기초금액(하복, 원)</label><input id="g-base2" type="text" placeholder="90,000" oninput="numFmt(this);SA()"></div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>🏢 업체(낙찰업체) 정보</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <div class="ig">
+      <div class="ii"><label>업체명(상호)</label><input id="g-vn" placeholder="(주)○○교복" oninput="SA()"></div>
+      <div class="ii"><label>대표자</label><input id="g-vr" placeholder="대표자 이름" oninput="SA()"></div>
+      <div class="ii"><label>사업자등록번호</label><input id="g-vb" placeholder="000-00-00000" oninput="SA()"></div>
+    </div>
+    <div class="ig">
+      <div class="ii"><label>업체 주소</label><input id="g-va" placeholder="경기도 ○○시 ○○로 00" oninput="SA()"></div>
+      <div class="ii"><label>업체 전화</label><input id="g-vt" placeholder="031-000-0000" oninput="SA()"></div>
+      <div class="ii"><label>업체 팩스</label><input id="g-vf" placeholder="031-000-0001" oninput="SA()"></div>
+    </div>
+    <div class="ig">
+      <div class="ii"><label>계약금액(원)</label><input id="g-vc" type="text" placeholder="50,000,000" oninput="numFmt(this);SA()"></div>
+      <div class="ii"><label>계약일</label><input id="g-vcd" type="date" oninput="SA()"></div>
+      <div class="ii"><label>담당자(업체)</label><input id="g-vp" placeholder="담당자 이름" oninput="SA()"></div>
+    </div>
+  </div>
+</div>
+<div class="gb">✅ 입력 완료 후 왼쪽 메뉴에서 원하는 서식을 클릭하세요. 기본정보가 모든 서식에 자동 반영됩니다.</div>
+</div>
+
+<!-- sec-flow -->
+<div id="sec-flow" class="sec">
+<div class="pt">📊 구매 흐름도</div>
+<div class="ps">각 단계를 클릭하면 해당 서식으로 이동합니다.</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>📅 연간 추진 일정</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <table class="gt" style="table-layout:auto;width:100%"><thead><tr>
+      <th style="width:90px;white-space:nowrap">월<span class="cr"></span></th><th style="width:200px">주요 업무<span class="cr"></span></th><th>세부 내용<span class="cr"></span></th><th style="width:120px">관련 서식<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td>9~10월</td><td>학교주관구매 홍보</td><td>초6·중3 학생 대상 안내문 발송</td><td>—</td></tr>
+      <tr><td>11월</td><td>구매인원 확정·치수측정</td><td>상급학교 배정 후 신청, 측정 5일 이상</td><td>—</td></tr>
+      <tr><td>11~12월</td><td>기초금액 산출</td><td>견적 3개 이상, 평균 또는 최저가 반영</td><td>기초금액 조서</td></tr>
+      <tr><td>12월</td><td>사전규격 공개</td><td>G2B 나라장터, 공개기간 5일 이상</td><td>—</td></tr>
+      <tr><td>12~1월</td><td>입찰공고 및 제안서 접수</td><td>2단계 입찰, 서류+가격 동시</td><td>입찰공고문</td></tr>
+      <tr><td>1월</td><td>블라인드 심사·낙찰자 결정</td><td>선정평가표, 적격자 대상 가격개찰</td><td>선정평가표</td></tr>
+      <tr><td>1~2월</td><td>계약 체결</td><td>단가계약, 특수조건 포함</td><td>계약 특수조건</td></tr>
+      <tr><td>2~3월</td><td>교복 제작·검사 (3단계)</td><td>샘플1차→원단2차→납품전3차</td><td>체크리스트</td></tr>
+      <tr><td>2~3월</td><td>납품 및 대금 지급</td><td>검사 완료 후 5일 이내</td><td>납품확인서</td></tr>
+      <tr><td>납품 후</td><td>개인정보 파기</td><td>목적 달성 즉시 파기</td><td>파기서약서</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>🔄 단계별 흐름</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <div class="flow-row">
+      <div class="fst"><div class="fsb" onclick="showSec('sec-base')"><div class="fn2">STEP 1</div>기초금액<br>산출</div><div class="fsd">11~12월</div></div>
+      <div class="fst"><div class="fsb" onclick="showSec('sec-bid')"><div class="fn2">STEP 2</div>입찰공고</div><div class="fsd">12~1월</div></div>
+      <div class="fst"><div class="fsb" onclick="showSec('sec-eval')"><div class="fn2">STEP 3</div>업체<br>선정평가</div><div class="fsd">1월</div></div>
+      <div class="fst"><div class="fsb" onclick="showSec('sec-special')"><div class="fn2">STEP 4</div>계약 체결</div><div class="fsd">1~2월</div></div>
+      <div class="fst"><div class="fsb" onclick="showSec('sec-ck')"><div class="fn2">STEP 5</div>검사·<br>검수</div><div class="fsd">2~3월</div></div>
+      <div class="fst"><div class="fsb" onclick="showSec('sec-dl')"><div class="fn2">STEP 6</div>납품<br>확인</div><div class="fsd">2~3월</div></div>
+      <div class="fst"><div class="fsb" onclick="showSec('sec-pp')"><div class="fn2">STEP 7</div>개인정보<br>파기</div><div class="fsd">납품 후</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- sec-base 기초금액 조서 -->
+<div id="sec-base" class="sec">
+<div class="pt">📊 기초금액 조서 (참고1)</div>
+<div class="ps">3개 업체 견적 입력 시 평균가격이 자동 계산됩니다. (가이드북 p.20~21)</div>
+<div class="fw">
+  <div class="fn">💡 현실적으로 인근 업체 3~5개의 견적서 평균치 또는 최저가를 반영. 교육청 상한 권고가격은 기초금액이 아님.</div>
+  <h2>기 초 금 액 조 서</h2>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">입 찰 건 명<span class="cr"></span></th><td colspan="3" id="base-bid" contenteditable></td></tr>
+    <tr><th>구 매 수 량<span class="cr"></span></th><td colspan="3" contenteditable>동·하복 1식 (학생 신청에 따라 최종 확정)</td></tr>
+  </tbody></table>
+  <h3>견적금액 입력 (단위: 원)</h3>
+  <table class="gt"><thead><tr>
+    <th style="width:80px">구분<span class="cr"></span></th>
+    <th>견적금액 1<span class="cr"></span></th>
+    <th>견적금액 2<span class="cr"></span></th>
+    <th>견적금액 3<span class="cr"></span></th>
+    <th style="width:100px">평균가격<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td>동복</td>
+      <td><input type="text" id="est-d1" placeholder="230,000" oninput="numFmt(this);calcBase()" style="width:100%;border:none;background:transparent;font-family:inherit;font-size:12px"></td>
+      <td><input type="text" id="est-d2" placeholder="227,500" oninput="numFmt(this);calcBase()" style="width:100%;border:none;background:transparent;font-family:inherit;font-size:12px"></td>
+      <td><input type="text" id="est-d3" placeholder="226,150" oninput="numFmt(this);calcBase()" style="width:100%;border:none;background:transparent;font-family:inherit;font-size:12px"></td>
+      <td id="est-da" style="font-weight:700;background:#f8fafc"></td>
+    </tr>
+    <tr><td>하복</td>
+      <td><input type="text" id="est-h1" placeholder="89,570" oninput="numFmt(this);calcBase()" style="width:100%;border:none;background:transparent;font-family:inherit;font-size:12px"></td>
+      <td><input type="text" id="est-h2" placeholder="88,000" oninput="numFmt(this);calcBase()" style="width:100%;border:none;background:transparent;font-family:inherit;font-size:12px"></td>
+      <td><input type="text" id="est-h3" placeholder="91,000" oninput="numFmt(this);calcBase()" style="width:100%;border:none;background:transparent;font-family:inherit;font-size:12px"></td>
+      <td id="est-ha" style="font-weight:700;background:#f8fafc"></td>
+    </tr>
+    <tr><td style="font-weight:700">합 계</td>
+      <td id="est-t1" style="font-weight:700;background:#f8fafc"></td>
+      <td id="est-t2" style="font-weight:700;background:#f8fafc"></td>
+      <td id="est-t3" style="font-weight:700;background:#f8fafc"></td>
+      <td id="est-ta" style="font-weight:700;background:#eff6ff;color:var(--bl)"></td>
+    </tr>
+  </tbody></table>
+  <table class="gt" style="margin-top:10px"><tbody>
+    <tr><th style="width:130px">기 초 금 액<span class="cr"></span></th>
+      <td>금 <strong id="est-final"></strong>원 (동복: <span id="est-fd"></span>원, 하복: <span id="est-fh"></span>원)</td>
+    </tr>
+    <tr><th>산 출 근 거<span class="cr"></span></th><td contenteditable>비교 견적 3개의 평균 가격 참고 (부가가치세 및 부속품 포함)</td></tr>
+  </tbody></table>
+  <div class="wb">⚠️ 기초금액 = 교복 낙찰가 결정 핵심요인. 견적 평균값을 기계적으로 적용하지 말고 적정성 검토 필요. 부가가치세 및 부속품(넥타이·리본 등) 포함 가격으로 작성.</div>
+  <div style="font-size:12px;text-align:right;margin-top:8px"><span id="base-yr"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig">
+    <span>작성자: <span style="display:inline-block;min-width:80px;border-bottom:1px solid #333"></span></span>
+    <span id="base-sn" style="font-weight:700"></span>
+  </div>
+  <div class="brow">
+    <button class="btn bg2" onclick="calcBase()">🔄 자동계산</button>
+    <button class="btn bp" onclick="PF('sec-base')">🖨️ 인쇄</button>
+  </div>
+</div>
+</div>
+
+<!-- sec-method 계약방법 안내 -->
+<div id="sec-method" class="sec">
+<div class="pt">📋 계약방법 안내</div>
+<div class="ps">2단계 입찰 vs 2인 이상 수의계약 비교 (가이드북 p.22~24)</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>🔄 계약방법 비교표</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <table class="gt"><thead><tr>
+      <th style="width:120px">구분<span class="cr"></span></th>
+      <th>2단계 입찰 (규격·가격 분리 동시입찰)<span class="cr"></span></th>
+      <th>2인 이상 견적서 제출 수의계약<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><th>금액 기준</th><td>1억원 초과</td><td>2천만원~1억원</td></tr>
+      <tr><th>관련 법령</th><td>지방계약법 시행령 제18조 제3항</td><td>지방계약법 시행령 제25조 제1항 제5호</td></tr>
+      <tr><th>공고명</th><td>"입찰" 공고</td><td>"견적서 제출 안내" 공고</td></tr>
+      <tr><th>지역제한</th><td>광역시도 단위 제한</td><td>시·군 단위 제한 가능</td></tr>
+      <tr><th>성립요건</th><td>2인 이상 참가하면 규격적격자 1인이라도 유효</td><td>2인 이상 참여</td></tr>
+      <tr><th>견본품 심사</th><td>견본품 제출 → 규격심사 → 가격개찰</td><td>가격개찰 (견본품 심사 미실시 → Q마크 등 증빙 필수)</td></tr>
+      <tr><th>낙찰자 결정</th><td>적격자 중 예정가격 이하 최저가</td><td>낙찰하한율 88% 이상 최저가</td></tr>
+      <tr><th>입찰 보증금</th><td>환수</td><td>미환수</td></tr>
+      <tr><th>특징</th><td>공정·투명, 담합 시 제재 가능</td><td>절차 간소, 품질 확보 주의 필요</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>⏰ 입찰공고 기간 기준</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <table class="gt"><thead><tr>
+      <th style="width:200px">구분<span class="cr"></span></th><th>공고 기간<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td>일반경쟁(제한)입찰</td><td>입찰서 제출 마감 전날 기산 7일 전 (긴급·재공고: 5일)</td></tr>
+      <tr><td>2인 이상 견적 제출</td><td>3일 이상 (공휴일·토요일 제외)</td></tr>
+      <tr><td>2단계 입찰 (추정가격 1억 미만)</td><td>마감 전날 기산 10일 전</td></tr>
+      <tr><td>2단계 입찰 (1억 이상 ~ 10억 미만)</td><td>마감 전날 기산 20일 전</td></tr>
+      <tr><td>긴급 및 재공고</td><td>마감 전날 기산 10일 전</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="card">
+  <div class="ch op" onclick="TC(this)"><h3>🏢 중소기업 우선 조달 기준</h3><span class="tog">▼</span></div>
+  <div class="cb op">
+    <div class="ib">국·공립학교만 해당. 사립학교는 준용 가능.</div>
+    <table class="gt"><thead><tr>
+      <th style="width:200px">추정가격<span class="cr"></span></th><th>대상<span class="cr"></span></th><th style="width:120px">1회 유찰 시<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td>2천만원 이상 ~ 1억원 미만</td><td>소기업 또는 소상공인 간 경쟁</td><td>중소기업 이하</td></tr>
+      <tr><td>1억원 이상 ~ 2.3억원 미만</td><td>중기업·소기업·소상공인 간 경쟁</td><td>제한 없음</td></tr>
+    </tbody></table>
+  </div>
+</div>
+</div>
+
+<!-- sec-bidtip 입찰공고 체크리스트 -->
+<div id="sec-bidtip" class="sec">
+<div class="pt">✏️ 입찰공고 전 체크리스트</div>
+<div class="ps">입찰공고문 작성 전 반드시 확인해야 할 사항입니다. (가이드북 p.25~26)</div>
+<div class="fw">
+  <h2>입찰공고 전 확인 체크리스트</h2>
+  <div class="fn">각 항목을 확인하고 체크하세요. 미확인 항목은 공고 전 반드시 조치 필요.</div>
+  <h3>□ 기본 확인 사항</h3>
+  <div class="ck-row"><input type="checkbox"><span>교복 규격서(혼용률, 색상, 디자인) 현행화 완료</span></div>
+  <div class="ck-row"><input type="checkbox"><span>기초금액 산출 완료 (견적 3개 이상 비교, 부가세·부속품 포함)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>나라장터(G2B) 발주계획 등록 완료</span></div>
+  <div class="ck-row"><input type="checkbox"><span>사전규격 공개 완료 (추정가격 5천만원 이상 시 G2B 5일 이상)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>계약방법 결정 완료 (추정가격에 따라 2단계입찰 / 수의계약 선택)</span></div>
+  <h3>□ 공고문 필수 기재 사항</h3>
+  <div class="ck-row"><input type="checkbox"><span>여학생 치마/바지 선택 가능 명시 (강요 및 추가금 요구 불가)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>단가계약 명시 (구매물량 = 학생 신청에 따라 최종 확정)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>추가구매 가능 명시 (해당 연도 계약단가로 품목별 개별 구매)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>견본품 제출 의무 명시 (미제출 시 평가 제외, 비용은 업체 부담)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>품목별 단가 비율표 제출 요청 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>Q마크 품질인증서 / KOLAS 공인기관 시험성적서 제출 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>A/S계획서, 소비자불만처리계획 제출 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>제조년월(최초착용년도) 라벨 표기 의무 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>청렴계약제 대상 명시 (입찰참가자 이행각서 제출 간주)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>부정당업자 제재 조항 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>학교주관구매 제도 저해 업체 입찰자격 배제 조항 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>천재지변·사회재난 시 계약내용 변경 가능 명시</span></div>
+  <h3>□ 제출서류 확인 (붙임4~14)</h3>
+  <div class="ck-row"><input type="checkbox"><span>붙임4 입찰참가신청서</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임5 입찰참가신고서</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임6 납품제안서 (납품실적증명서 첨부)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임7 납품규격서</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임8 시설현황서</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임9 단가비율표</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임10 A/S계획서</span></div>
+  <div class="ck-row"><input type="checkbox"><span>붙임11 소비자불만처리계획</span></div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-bidtip')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-ccheck 계약체결 확인사항 -->
+<div id="sec-ccheck" class="sec">
+<div class="pt">📝 계약체결 확인사항</div>
+<div class="ps">낙찰자 결정 후 계약체결 시 확인 사항입니다. (가이드북 p.30)</div>
+<div class="fw">
+  <h2>계약체결 확인 체크리스트</h2>
+  <div class="fn">낙찰업체가 결정된 후 계약 전 아래 사항을 모두 확인하세요.</div>
+  <h3>□ 계약 전 확인</h3>
+  <div class="ck-row"><input type="checkbox"><span>낙찰업체 제품공정 확인 (원단 샘플 또는 견본품 학교 보관)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>단가계약 체결 (계약서에 "구매물량은 학생 신청에 따라 확정" 명시)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>계약이행보증보험증권 제출 요청 (낙찰단가×구매예정수량의 10% 이상)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>품목별 단가 비율표대로 단가표 작성·제출 확인</span></div>
+  <div class="ck-row"><input type="checkbox"><span>청렴계약이행각서 징구</span></div>
+  <div class="ck-row"><input type="checkbox"><span>계약 특수조건 첨부 (계약서 포함)</span></div>
+  <h3>□ 계약서 필수 내용</h3>
+  <div class="ck-row"><input type="checkbox"><span>추가구매 조항: 해당연도 계약단가로 품목별 개별 구매 보장</span></div>
+  <div class="ck-row"><input type="checkbox"><span>A/S 조항: 납품 후 3년 품질보증, 1년 무상 A/S</span></div>
+  <div class="ck-row"><input type="checkbox"><span>치수측정: 주말 포함 최소 5일 이상, 비용은 업체 부담</span></div>
+  <div class="ck-row"><input type="checkbox"><span>A/S 지정점 명시 및 폐업 시 1주일 이내 재지정</span></div>
+  <div class="ck-row"><input type="checkbox"><span>납품 지연 시 지체배상금 (1일당 계약금액의 0.8/1000)</span></div>
+  <div class="ck-row"><input type="checkbox"><span>동복 납품 시 하자이행보증보험증권 제출 요청</span></div>
+  <div class="ck-row"><input type="checkbox"><span>하복 납품 시 하자이행보증보험증권 제출 요청</span></div>
+  <div class="ck-row"><input type="checkbox"><span>개인정보 보호 및 납품 후 즉시 파기 의무 명시</span></div>
+  <div class="ck-row"><input type="checkbox"><span>하도급 금지 조항</span></div>
+  <div class="ck-row"><input type="checkbox"><span>디자인 소유권 학교 귀속 명시</span></div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-ccheck')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-bid 입찰공고문 -->
+<div id="sec-bid" class="sec">
+<div class="pt">📄 입찰공고문 (자동화)</div>
+<div class="ps">기본정보 입력 시 공고문이 자동 완성됩니다. (가이드북 p.80~89)</div>
+<div class="fw">
+  <div class="fn">💡 기본정보에서 입력한 학교명·기초금액·납품기한이 자동 반영됩니다. 날짜 항목을 직접 편집하세요.</div>
+  <h2 id="bid-title">2026학년도 ○○중학교 교복(동·하복)<br>학교주관구매 업체 선정 입찰 공고〔2단계(규격·가격분리 동시)〕</h2>
+  <div style="font-size:12px;margin-bottom:10px;line-height:1.9">「지방자치단체를 당사자로 하는 계약에 관한 법률 시행령」제18조(2단계 입찰)의 규정에 따라 <strong id="bid-yr"></strong>학년도 <strong id="bid-sn1"></strong> 교복(동·하복) 학교주관구매 업체 선정을 위해 다음과 같이 공고합니다.</div>
+  <h3>1. 입찰에 부치는 사항</h3>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">입찰건명<span class="cr"></span></th><td colspan="3" id="bid-bidname" contenteditable></td></tr>
+    <tr><th>구매예정수량<span class="cr"></span></th><td colspan="3" id="bid-cnt" contenteditable></td></tr>
+    <tr><th>기초금액<span class="cr"></span></th><td colspan="3" id="bid-base" contenteditable></td></tr>
+    <tr><th>규격입찰서<br>제출기간<span class="cr"></span></th><td contenteditable>20__.__.__(  ) 00:00 ~ 20__.__.__(  ) 16:00</td><th style="width:80px">제출방법<span class="cr"></span></th><td contenteditable>직접 제출 (우편·FAX 불가)</td></tr>
+    <tr><th>제출장소<span class="cr"></span></th><td id="bid-snaddr" contenteditable></td><th>공동수급<span class="cr"></span></th><td contenteditable>허용하지 않음</td></tr>
+    <tr><th>가격입찰서<br>제출기간<span class="cr"></span></th><td contenteditable>20__.__.__(  ) 00:00 ~ 20__.__.__(  ) 00:00</td><th>제출방법<span class="cr"></span></th><td contenteditable>전자제출 (G2B, 24시간)</td></tr>
+    <tr><th>제안서 설명회<span class="cr"></span></th><td contenteditable>20__.__.__(  ) 17:00 학교 지정장소</td><th>개찰일시<span class="cr"></span></th><td contenteditable>20__.__.__(  ) 10:00</td></tr>
+    <tr><th>납품기한(동복)<span class="cr"></span></th><td id="bid-ddt" contenteditable></td><th>납품기한(하복)<span class="cr"></span></th><td id="bid-ddt2" contenteditable></td></tr>
+    <tr><th>납품장소<span class="cr"></span></th><td id="bid-snaddr2" contenteditable></td><th>기타<span class="cr"></span></th><td contenteditable>붙임 규격서 참조</td></tr>
+  </tbody></table>
+  <h3>2. 입찰 방식</h3>
+  <div style="font-size:12px;line-height:2.0">
+    가. 본 입찰은 「지방계약법 시행령」 제18조 제3항에 따라 <strong>2단계 입찰(규격·가격분리 동시입찰)</strong>로 규격제안서와 가격입찰서를 동시에 각각 제출합니다.<br>
+    나. 단가계약 및 지역제한 경쟁(경기도)입찰이며, 청렴계약제 시행대상입니다.<br>
+    다. 규격입찰서(제안서)는 본교에 직접 제출, 가격입찰서는 G2B(www.g2b.go.kr) 전자입찰로 제출합니다.<br>
+    라. 공동수급이 허용되지 않습니다.
+  </div>
+  <h3>3. 입찰 참가자격</h3>
+  <div style="font-size:12px;line-height:2.0">
+    가. 지방계약법 시행령 제13조 및 시행규칙 제14조의 자격 요건을 갖춘 업체<br>
+    나. 중소기업자 우선조달제도에 따른 <span contenteditable>소기업 또는 소상공인(추정가격 1억 초과 시 중기업 포함)</span><br>
+    다. 입찰공고일 전날부터 계약체결일까지 <strong>경기도</strong> 소재 업체<br>
+    라. 본교 규격서 및 계약 특수조건을 이행할 수 있는 업체<br>
+    마. 나라장터(G2B) 입찰참가자격 등록 및 전자입찰 이용자 등록 완료 업체
+  </div>
+  <h3>4. 제출서류</h3>
+  <div style="font-size:12px;line-height:2.0">
+    1) [붙임4] 입찰참가신청서 &nbsp; 2) [붙임5] 입찰참가신고서 &nbsp; 3) [붙임6] 납품제안서 (납품실적증명서 첨부)<br>
+    4) [붙임7] 납품규격서 &nbsp; 5) [붙임8] 시설현황서 &nbsp; 6) [붙임9] 단가비율표 &nbsp; 7) [붙임10] A/S계획서<br>
+    8) [붙임11] 소비자불만처리계획 &nbsp; 9) 교복 견본 (남·여 각 1벌, 블라인드 처리 후 제출)<br>
+    10) KOLAS 공인기관 시험성적서 &nbsp; 11) Q마크 품질인증서 (소지 업체) &nbsp; 12) 사업자등록증<br>
+    13) 인감증명서·사용인감계 &nbsp; 14) 중소기업·소상공인 확인서 &nbsp; 15) 국세·지방세 납세증명서<br>
+    16) 공정거래위원회 법위반사실확인서 &nbsp; 17) [붙임14] 위임장 (대리인 제출 시)
+  </div>
+  <h3>5. 낙찰자 결정방법</h3>
+  <div style="font-size:12px;line-height:2.0">
+    규격평가 점수 <input type="number" style="width:50px;border:1px solid var(--bd);border-radius:3px;padding:2px 4px;font-size:12px">점 이상 업체 중 예정가격 이하 최저가 투찰업체를 낙찰자로 결정.<br>
+    동일가격 2인 이상 시 규격평가 점수 높은 자 → 동점 시 추첨.
+  </div>
+  <div class="rb">⚠️ 여학생 치마/바지 선택 가능 명시 필수. 추가금 요구 불가. 공고문 작성 후 관련법령 준수 여부 반드시 재확인.</div>
+  <div class="fsig" style="margin-top:14px">
+    <span></span>
+    <div style="text-align:center">
+      <div id="bid-sn2" style="font-size:14px;font-weight:800"></div>
+      <div style="font-size:12px">공고</div>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn bp" onclick="PF('sec-bid')">🖨️ 인쇄</button>
+  </div>
+</div>
+</div>
+
+<!-- sec-eval 선정평가표 -->
+<div id="sec-eval" class="sec">
+<div class="pt">📊 적격업체 선정 평가표</div>
+<div class="ps">A~D형 중 학교 실정에 맞게 선택하여 사용하세요. (가이드북 p.91~101)</div>
+<div class="fn">💡 A형: 납품실적 중시 | B형: 거리+납품실적 | C형: 다양한 업체 활성화 | D형: A/S·추가구매 편의 중시</div>
+<div class="tab-bar">
+  <div class="tab act" onclick="showTab(this,'eval-a')">A형 (납품실적)</div>
+  <div class="tab" onclick="showTab(this,'eval-b')">B형 (납품+거리)</div>
+  <div class="tab" onclick="showTab(this,'eval-c')">C형 (활성화)</div>
+  <div class="tab" onclick="showTab(this,'eval-d')">D형 (거리접근성)</div>
+</div>
+<div id="eval-a" class="tab-content act">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>교복 학교주관구매 적격업체 선정 평가표 (A형)</h2>
+    <div class="ib">* A형 예시: 납품실적 중시 유형. 평가항목·배점은 학교 실정에 맞게 조정.</div>
+    <table class="gt"><thead><tr>
+      <th style="width:60px">구분<span class="cr"></span></th><th>평가항목<span class="cr"></span></th><th>등급 및 배점기준<span class="cr"></span></th><th style="width:60px">배점<span class="cr"></span></th><th style="width:70px">평가점수<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td rowspan="4" style="text-align:center;background:#f8fafc;font-weight:700">객관적<br>평가<br>(50점)</td><td>수행경험 (10점)<br>최근 3년간 납품실적</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>8건 이상 → 10점</option><option>4~7.5건 → 7점</option><option>3.5건 이하 → 5점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>품질인증 여부 (15점)<br>Q마크·KOLAS 시험성적서</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>전품목 Q마크 → 15점</option><option>전품목 시험성적서 → 12점</option><option>일부 Q마크 → 9점</option><option>일부 시험성적서 → 6점</option><option>미인증 → 0점</option></select></td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>국산섬유 인증 여부 (15점)<br>한국섬유산업연합회 인증</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>전품목 트랙1/3 → 15점</option><option>트랙2 또는 원산지증빙 → 10점</option><option>미제출 → 0점</option></select></td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>가격 적정성 (10점)<br>품목별 단가비율 초과율 합산</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>2% 이하 → 10점</option><option>2% 초과 → 7점</option><option>4% 초과 → 5점</option><option>6% 초과 → 3점</option><option>7% 초과 → 0점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td rowspan="4" style="text-align:center;background:#f8fafc;font-weight:700">주관적<br>평가<br>(50점)</td><td>옷감의 재질 (15점)<br>촉감·질감·구김·신축성</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>매우 우수 → 15점</option><option>우수 → 12점</option><option>보통 → 9점</option><option>미흡 → 6점</option><option>매우 미흡 → 3점</option></select></td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>교복 완성도 (10점)<br>봉제·단추·마감처리</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>매우 우수 → 10점</option><option>우수 → 8점</option><option>보통 → 6점</option><option>미흡 → 4점</option><option>매우 미흡 → 2점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>A/S 계획 (5점)<br>무상기간·편의성·처리절차</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>매우 우수 → 5점</option><option>우수 → 4점</option><option>보통 → 3점</option><option>미흡 → 2점</option><option>매우 미흡 → 1점</option></select></td><td contenteditable>5</td><td contenteditable></td></tr>
+      <tr><td>소비자불만 처리계획 (10점)<br>하자보상·처리방안</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>우수 → 10점</option><option>보통 → 7점</option><option>미흡 → 5점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td rowspan="2" style="text-align:center;background:#f8fafc;font-weight:700">블라인드<br>(10점)</td><td colspan="2">블라인드 심사 적절성 (10점)<br>허술한 상표가림·특정상표 발견 시 감점, 허위서류·서류위조 시 부적격</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td colspan="2">합 계</td><td>100</td><td id="eval-sum-a" style="font-weight:700;background:#eff6ff"></td></tr>
+      <tr><td colspan="2" style="font-size:11px;color:var(--gray)">가점/감점</td><td colspan="2" style="font-size:11px">만족도·추가구매거부·담합이력·규격미달 견본</td><td contenteditable></td></tr>
+    </tbody></table>
+    <div style="margin-top:8px;font-size:12px">
+      20&nbsp;&nbsp;&nbsp;&nbsp;년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일 &nbsp;&nbsp;&nbsp;
+      <span id="eval-sn" style="font-weight:700"></span> 교복 학교주관구매 평가위원 _____________________ (인 또는 서명)
+    </div>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-eval')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+<div id="eval-b" class="tab-content">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>교복 학교주관구매 적격업체 선정 평가표 (B형)</h2>
+    <div class="ib">* B형: 납품실적 + 거리 접근성 균형 유형 (거리 10점, 납품실적 10점)</div>
+    <table class="gt"><thead><tr>
+      <th style="width:60px">구분<span class="cr"></span></th><th>평가항목<span class="cr"></span></th><th>등급 및 배점기준<span class="cr"></span></th><th style="width:60px">배점<span class="cr"></span></th><th style="width:70px">평가점수<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td rowspan="5" style="text-align:center;background:#f8fafc;font-weight:700">객관적<br>평가<br>(50점)</td><td>수행경험 (10점)</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>8건 이상 → 10점</option><option>4~7.5건 → 7점</option><option>3.5건 이하 → 5점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>품질인증 여부 (10점)</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>전품목 Q마크 → 10점</option><option>전품목 시험성적서 → 8점</option><option>일부 → 4~6점</option><option>미인증 → 0점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>국산섬유 인증 여부 (10점)</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>전품목 트랙1/3 → 10점</option><option>트랙2 → 5점</option><option>미제출 → 0점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>거리적 접근성 (10점)</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>2km 미만 → 10점</option><option>2~7km → 8점</option><option>7~12km → 6점</option><option>12~17km → 4점</option><option>17km 이상 → 0점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>가격 적정성 (10점)</td><td><select style="width:100%;font-family:inherit;font-size:11px;border:none;background:transparent"><option>2% 이하 → 10점</option><option>4% 이하 → 7점</option><option>6% 이하 → 5점</option><option>7% 초과 → 0점</option></select></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td rowspan="5" style="text-align:center;background:#f8fafc;font-weight:700">주관적<br>평가<br>(50점)</td><td>옷감의 재질 (15점)</td><td contenteditable>매우 우수 15 / 우수 12 / 보통 9 / 미흡 6 / 매우 미흡 3</td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>교복 완성도 (10점)</td><td contenteditable>매우 우수 10 / 우수 8 / 보통 6 / 미흡 4 / 매우 미흡 2</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>A/S 계획 (5점)</td><td contenteditable>매우 우수 5 / 우수 4 / 보통 3 / 미흡 2 / 매우 미흡 1</td><td contenteditable>5</td><td contenteditable></td></tr>
+      <tr><td>소비자불만 처리계획 (10점)</td><td contenteditable>우수 10 / 보통 7 / 미흡 5</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>블라인드 심사 적절성 (10점)</td><td contenteditable>우수 10 / 미흡 3 / 허위서류·위조 부적격</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td colspan="2">합 계</td><td></td><td>100</td><td style="font-weight:700;background:#eff6ff"></td></tr>
+    </tbody></table>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-eval')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+<div id="eval-c" class="tab-content">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>교복 학교주관구매 적격업체 선정 평가표 (C형)</h2>
+    <div class="ib">* C형: 다양한 업체 참여 활성화 유형 (납품실적 배점 없음)</div>
+    <table class="gt"><thead><tr>
+      <th style="width:60px">구분<span class="cr"></span></th><th>평가항목<span class="cr"></span></th><th>등급 및 배점기준<span class="cr"></span></th><th style="width:60px">배점<span class="cr"></span></th><th style="width:70px">평가점수<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td rowspan="4" style="text-align:center;background:#f8fafc;font-weight:700">객관적<br>평가<br>(50점)</td><td>품질인증 여부 (15점)</td><td contenteditable>전품목 Q마크 15 / 전품목 시험성적서 12 / 일부 Q마크 9 / 일부 시험성적서 6 / 미인증 0</td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>국산섬유 인증 여부 (10점)</td><td contenteditable>트랙1/3 → 10 / 트랙2 또는 원산지증빙 → 5 / 미제출 → 0</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>거리적 접근성 (10점)</td><td contenteditable>2km 미만 10 / 2~7km 8 / 7~12km 6 / 12~17km 4 / 17km 이상 0</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>가격 적정성 (15점)</td><td contenteditable>2% 이하 15 / 2% 초과 10 / 4% 초과 5 / 6% 초과 3 / 7% 초과 0</td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td rowspan="4" style="text-align:center;background:#f8fafc;font-weight:700">주관적<br>평가<br>(50점)</td><td>옷감의 재질 (15점)</td><td contenteditable></td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>교복 완성도 (10점)</td><td contenteditable></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>A/S 계획 (5점)</td><td contenteditable></td><td contenteditable>5</td><td contenteditable></td></tr>
+      <tr><td>소비자불만·블라인드 (20점)</td><td contenteditable>소비자불만 10 / 블라인드 10</td><td contenteditable>20</td><td contenteditable></td></tr>
+      <tr><td colspan="2">합 계</td><td></td><td>100</td><td style="font-weight:700;background:#eff6ff"></td></tr>
+    </tbody></table>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-eval')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+<div id="eval-d" class="tab-content">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>교복 학교주관구매 적격업체 선정 평가표 (D형)</h2>
+    <div class="ib">* D형: A/S·추가구매를 위한 학부모·학생 방문 편의 중시 (거리 15점)</div>
+    <table class="gt"><thead><tr>
+      <th style="width:60px">구분<span class="cr"></span></th><th>평가항목<span class="cr"></span></th><th>등급 및 배점기준<span class="cr"></span></th><th style="width:60px">배점<span class="cr"></span></th><th style="width:70px">평가점수<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td rowspan="5" style="text-align:center;background:#f8fafc;font-weight:700">객관적<br>평가<br>(50점)</td><td>수행경험 (10점)</td><td contenteditable>8건 이상 10 / 4~7.5건 7 / 3.5건 이하 5</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>품질인증 여부 (10점)</td><td contenteditable>전품목 Q마크 10 / 전품목 시험성적서 8 / 일부 4~6 / 미인증 0</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>국산섬유 인증 여부 (10점)</td><td contenteditable>트랙1/3 → 10 / 트랙2 → 5 / 미제출 → 0</td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>거리적 접근성 ★ (15점)</td><td contenteditable>2km 미만 15 / 2~7km 12 / 7~12km 9 / 12~17km 6 / 17km 이상 0</td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>가격 적정성 (5점)</td><td contenteditable>2% 이하 5 / 2% 초과 4 / 4% 초과 3 / 6% 초과 2 / 7% 초과 0</td><td contenteditable>5</td><td contenteditable></td></tr>
+      <tr><td rowspan="4" style="text-align:center;background:#f8fafc;font-weight:700">주관적<br>평가<br>(50점)</td><td>옷감의 재질 (15점)</td><td contenteditable></td><td contenteditable>15</td><td contenteditable></td></tr>
+      <tr><td>교복 완성도 (10점)</td><td contenteditable></td><td contenteditable>10</td><td contenteditable></td></tr>
+      <tr><td>A/S 계획 (5점)</td><td contenteditable></td><td contenteditable>5</td><td contenteditable></td></tr>
+      <tr><td>소비자불만·블라인드 (20점)</td><td contenteditable>소비자불만 10 / 블라인드 10</td><td contenteditable>20</td><td contenteditable></td></tr>
+      <tr><td colspan="2">합 계</td><td></td><td>100</td><td style="font-weight:700;background:#eff6ff"></td></tr>
+    </tbody></table>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-eval')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+</div>
+
+<!-- sec-special 계약 특수조건 -->
+<div id="sec-special" class="sec">
+<div class="pt">📜 교복 구매계약 특수조건</div>
+<div class="ps">학교명·업체명이 자동 반영됩니다. (서연중 2026 기준)</div>
+<div class="fw">
+  <div class="fn">💡 기본정보에서 학교명·업체명·납품기한 입력 시 자동 반영됩니다. 셀 클릭으로 편집 가능합니다.</div>
+  <h2 id="sp-title">학교주관구매 계약 특수조건</h2>
+  <div style="font-size:12px;line-height:2.0;margin-bottom:12px">
+    <strong id="sp-sn"></strong> <strong id="sp-yr"></strong>학년도 교복 학교주관구매 계약을 체결함에 있어 <strong id="sp-sn2"></strong>(이하 "학교"라 한다)과 계약상대자 <span id="sp-vn" style="display:inline-block;min-width:100px;border-bottom:1px solid #333"></span> 대표 <span id="sp-vr" style="display:inline-block;min-width:60px;border-bottom:1px solid #333"></span>(이하 "공급자"라 한다)간에 본 계약의 성실한 이행을 위하여 다음과 같이 계약특수조건을 정한다.
+  </div>
+  <table class="gt"><tbody>
+    <tr><th style="width:200px">제1조 구매수량·단가<span class="cr"></span></th><td contenteditable>① 구매수량은 학생 신청에 따라 확정. ② 납품 완료 후 추가구매 희망 학생에게 해당연도 계약단가로 판매. ③ 계약이행보증보험증권 제출 의무. ④ 학생 희망 사이즈로 판매. ⑤ 전입생 등 추가수량 충분히 확보.</td></tr>
+    <tr><th>제2조 납품기한·장소<span class="cr"></span></th><td>동복(생활복 포함): <span id="sp-ddt" contenteditable style="display:inline-block;min-width:80px;border-bottom:1px solid #999"></span>까지, 하복(생활복 포함): <span id="sp-ddt2" contenteditable style="display:inline-block;min-width:80px;border-bottom:1px solid #999"></span>까지 전량 납품. 최종납품확인서 제출.</td></tr>
+    <tr><th>제3조 치수 측정<span class="cr"></span></th><td contenteditable>① 측정장소·시간을 학교와 사전 협의. 측정기간 주말 포함 최소 5일 이상. ② 반드시 교직원 또는 보호자 동반, 공개된 장소에서 실시. 남학생은 남성이, 여학생은 여성이 측정. ③ 학교는 측정에 적극 협조.</td></tr>
+    <tr><th>제4조 납품 전 확인<span class="cr"></span></th><td contenteditable>① 원단 구입 전 샘플검사(1차), 원단 입고 검사(2차) 협조. ② 제출 샘플과 동일 원부자재 사용. ③ 봉제 상태 검수 성실 응대. ④ 납품 직전 무작위 검사에 응하고 합격 후 납품.</td></tr>
+    <tr><th>제5조 교복 상태<span class="cr"></span></th><td contenteditable>① 원단 오염·파열·절상 없음. ② 재단 반듯, 염색불량·이색원단 불사용. ③ 봉제선 균일, 10mm간 5~6땀. ④ 단추구멍 적정. ⑤ 봉합 위·밑실 당겨짐 없음. ⑥ 실밥 정리. ⑦ 통풍 양호, 비침 없음.</td></tr>
+    <tr><th>제6조 검사·검수<span class="cr"></span></th><td contenteditable>① 계약일 이후 제조된 완제품 납품. ② 학교 규격 일치, 학년/반/성명 기재 개별 포장. ③ 안감에 치수·재질·세탁법·수선연락처·제조년월 라벨 부착. ④ Q마크·국산섬유 인증마크 부착. ⑤ 최종납품확인서 제출 및 검사·검수 합격 후 납품 완료.</td></tr>
+    <tr><th>제7조 품질검사<span class="cr"></span></th><td contenteditable>학교는 일부 교복을 전문기관에 품질검사 의뢰 가능. 문제 발생 시 공급자에게 교환 등 필요조치 요구.</td></tr>
+    <tr><th>제8조 교환·하자<span class="cr"></span></th><td contenteditable>납품된 교복은 견본과 동일해야 하며, 규격서·특수조건과 불일치 시 무상 교환. 치수 불일치 시 무상 교환. 소비자 불만은 제출한 처리계획에 따라 처리.</td></tr>
+    <tr><th>제9조 하자보증<span class="cr"></span></th><td contenteditable>동복·하복 납품 시점에 각각 하자이행보증보험증권 제출. (하자보증기간: 1년, 구매확정금액 기준)</td></tr>
+    <tr><th>제10조 사후관리<span class="cr"></span></th><td contenteditable>① 납품일부터 3년간 품질보증, 1년 무상 A/S. ② 학생 귀책 손상은 실제 수선비 청구. ③ A/S 수선점 연락처·주소 제출. ④ A/S 지정점 폐업 시 1주일 이내 재지정 통보. ⑤ A/S 요청 신속·친절 처리.</td></tr>
+    <tr><th>제11조 지연배상금<span class="cr"></span></th><td contenteditable>납기 지연 시: 지체일수 1일당 계약금액의 0.8/1000 지연배상금 공제. 학교 귀책 또는 천재지변은 제외.</td></tr>
+    <tr><th>제12조 대금청구<span class="cr"></span></th><td contenteditable>검사·검수 완료 후 대금청구에 따라 지정 금융기관 온라인 계좌로 5일 이내 (토·공휴일 제외) 송금.</td></tr>
+    <tr><th>제13조 금액변경<span class="cr"></span></th><td contenteditable>계약기간 중 원단 시장가격 변동 등으로 계약금액 변경 요구 불가. 추가구매 시에도 동일 단가 적용.</td></tr>
+    <tr><th>제14조 계약불이행<span class="cr"></span></th><td contenteditable>고의·과실로 불법행위 또는 계약불이행·중대 하자 발생 시 민·형사상 모든 책임. 개인정보 유출 시 모든 민·형사상 책임.</td></tr>
+    <tr><th>제15조 하도급 금지<span class="cr"></span></th><td contenteditable>본 계약은 제3자에게 하도급할 수 없음.</td></tr>
+    <tr><th>제16조 디자인 소유권<span class="cr"></span></th><td contenteditable>디자인 제작에 관계없이 선정된 디자인의 소유권은 학교에 귀속.</td></tr>
+    <tr><th>제17조 해석·협의<span class="cr"></span></th><td contenteditable>이견 발생 시 계약서 본문과 특수조건의 종합적·합리적 해석으로 원래 계약 취지에 부합하는 방향으로 해석.</td></tr>
+    <tr><th>제18조 소송관할<span class="cr"></span></th><td id="sp-court" contenteditable></td></tr>
+  </tbody></table>
+  <div style="margin-top:16px;font-size:12px;text-align:right"><span id="sp-yr2"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig" style="margin-top:14px">
+    <div>
+      <p>학&nbsp;&nbsp;&nbsp;&nbsp;교: <span id="sp-sn3" style="display:inline-block;min-width:100px;border-bottom:1px solid #333"></span></p>
+      <p>학 교 장: <span id="sp-pr" style="display:inline-block;min-width:80px;border-bottom:1px solid #333"></span> (인)</p>
+    </div>
+    <div>
+      <p>공 급 자: <span id="sp-vn2" style="display:inline-block;min-width:100px;border-bottom:1px solid #333"></span></p>
+      <p>대 표 자: <span id="sp-vr2" style="display:inline-block;min-width:80px;border-bottom:1px solid #333"></span> (인)</p>
+    </div>
+  </div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-special')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-pubdoc 공문서식 -->
+<div id="sec-pubdoc" class="sec">
+<div class="pt">📁 공문서식 모음</div>
+<div class="ps">입찰·평가 관련 공문 서식입니다. (가이드북 p.122~143)</div>
+<div class="tab-bar">
+  <div class="tab act" onclick="showTab(this,'doc-a')">입찰공고 결재</div>
+  <div class="tab" onclick="showTab(this,'doc-b')">제안서 접수 보고</div>
+  <div class="tab" onclick="showTab(this,'doc-c')">평가결과 보고</div>
+  <div class="tab" onclick="showTab(this,'doc-d')">낙찰자 결정 보고</div>
+</div>
+<div id="doc-a" class="tab-content act">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>입찰공고 결재 공문</h2>
+    <table class="gt"><tbody>
+      <tr><th style="width:80px">수 신<span class="cr"></span></th><td contenteditable>내부결재</td></tr>
+      <tr><th>제 목<span class="cr"></span></th><td id="docA-title" contenteditable></td></tr>
+    </tbody></table>
+    <div style="font-size:12px;line-height:2.0;margin:10px 0">
+      <span id="docA-yr"></span>학년도 <span id="docA-sn"></span> 교복(동·하복) 학교주관구매 업체 선정 입찰을 다음과 같이 공고하고자 합니다.<br>
+      <strong>다 음</strong><br>
+      가. 공고명: <span id="docA-bid"></span><br>
+      나. 공고일: 20__.__.__(  )<br>
+      다. 공고방법: 학교 홈페이지 및 나라장터(G2B) 게재<br>
+      라. 공고내역: 붙임과 같음
+    </div>
+    <div style="font-size:12px;font-weight:700">붙임 &nbsp;<span id="docA-yr2"></span>학년도 <span id="docA-sn2"></span> 교복(동·하복) 구매업체 선정 입찰 공고서 1부. 끝.</div>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-pubdoc')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+<div id="doc-b" class="tab-content">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>교복 제안서 접수결과 보고</h2>
+    <table class="gt"><tbody>
+      <tr><th style="width:80px">수 신<span class="cr"></span></th><td contenteditable>학교장</td></tr>
+      <tr><th>제 목<span class="cr"></span></th><td contenteditable>교복(동·하복) 학교주관구매 제안서 접수결과 보고</td></tr>
+    </tbody></table>
+    <div style="font-size:12px;line-height:2.0;margin:10px 0">
+      <span id="docB-yr"></span>학년도 교복(동·하복) 학교주관구매 제안서 접수결과를 붙임과 같이 보고합니다.
+    </div>
+    <h3>제안서 접수 현황</h3>
+    <table class="gt"><thead><tr>
+      <th style="width:30px">No<span class="cr"></span></th><th>업체명<span class="cr"></span></th><th style="width:80px">접수일시<span class="cr"></span></th><th style="width:80px">견본품<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td>1</td><td contenteditable></td><td contenteditable></td><td contenteditable>제출</td><td contenteditable></td></tr>
+      <tr><td>2</td><td contenteditable></td><td contenteditable></td><td contenteditable>제출</td><td contenteditable></td></tr>
+      <tr><td>3</td><td contenteditable></td><td contenteditable></td><td contenteditable>제출</td><td contenteditable></td></tr>
+    </tbody></table>
+    <div class="brow">
+      <button class="btn bs" onclick="addDocBRow()">＋ 행 추가</button>
+      <button class="btn bp" onclick="PF('sec-pubdoc')">🖨️ 인쇄</button>
+    </div>
+  </div>
+</div>
+<div id="doc-c" class="tab-content">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>교복 적격업체 선정 평가결과 보고</h2>
+    <table class="gt"><tbody>
+      <tr><th style="width:80px">수 신<span class="cr"></span></th><td contenteditable>학교장</td></tr>
+      <tr><th>제 목<span class="cr"></span></th><td contenteditable>교복(동·하복) 학교주관구매 적격업체 선정 평가결과 보고</td></tr>
+    </tbody></table>
+    <div style="font-size:12px;line-height:2.0;margin:10px 0">
+      <span id="docC-yr"></span>학년도 교복(동·하복) 학교주관구매 적격업체 선정을 위한 평가위원회의 평가 결과를 붙임과 같이 보고합니다.
+    </div>
+    <h3>평가 결과</h3>
+    <table class="gt"><thead><tr>
+      <th style="width:30px">순번<span class="cr"></span></th><th>업체명<span class="cr"></span></th><th style="width:80px">평가점수<span class="cr"></span></th><th style="width:80px">적격여부<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+    </tr></thead><tbody>
+      <tr><td>1</td><td contenteditable></td><td contenteditable></td><td contenteditable>적격</td><td contenteditable></td></tr>
+      <tr><td>2</td><td contenteditable></td><td contenteditable></td><td contenteditable>적격</td><td contenteditable></td></tr>
+      <tr><td>3</td><td contenteditable></td><td contenteditable></td><td contenteditable>부적격</td><td contenteditable></td></tr>
+    </tbody></table>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-pubdoc')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+<div id="doc-d" class="tab-content">
+  <div class="fw" style="border:none;padding:0;max-width:100%">
+    <h2>낙찰자 결정 결과 보고</h2>
+    <table class="gt"><tbody>
+      <tr><th style="width:80px">수 신<span class="cr"></span></th><td contenteditable>학교장</td></tr>
+      <tr><th>제 목<span class="cr"></span></th><td contenteditable>교복(동·하복) 학교주관구매 낙찰자 결정 결과 보고</td></tr>
+    </tbody></table>
+    <table class="gt" style="margin-top:10px"><tbody>
+      <tr><th style="width:130px">입 찰 건 명<span class="cr"></span></th><td id="docD-bid" contenteditable></td></tr>
+      <tr><th>낙 찰 업 체<span class="cr"></span></th><td id="docD-vn" contenteditable></td></tr>
+      <tr><th>낙 찰 단 가<span class="cr"></span></th><td contenteditable>동복 금          원 / 하복 금          원 (부가세 포함)</td></tr>
+      <tr><th>낙 찰 일<span class="cr"></span></th><td contenteditable></td></tr>
+      <tr><th>계 약 예 정 일<span class="cr"></span></th><td contenteditable></td></tr>
+      <tr><th>납 품 기 한<span class="cr"></span></th><td>동복: <span id="docD-ddt"></span> / 하복: <span id="docD-ddt2"></span></td></tr>
+    </tbody></table>
+    <div class="brow"><button class="btn bp" onclick="PF('sec-pubdoc')">🖨️ 인쇄</button></div>
+  </div>
+</div>
+</div>
+
+<!-- sec-f4 -->
+<div id="sec-f4" class="sec">
+<div class="pt">📄 붙임4 — 입찰참가신청서</div>
+<div class="ps">학교정보·업체정보가 자동 반영됩니다.</div>
+<div class="fw">
+  <h2>입 찰 참 가 신 청 서</h2>
+  <div class="fn">기본정보에서 입력한 학교명·입찰건명·업체정보가 자동 반영됩니다.</div>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">입 찰 건 명<span class="cr"></span></th><td colspan="3" id="f4-bid" contenteditable></td></tr>
+    <tr><th>상 호 (법인명)<span class="cr"></span></th><td id="f4-vn" contenteditable></td><th>대 표 자<span class="cr"></span></th><td id="f4-vr" contenteditable></td></tr>
+    <tr><th>사업자등록번호<span class="cr"></span></th><td id="f4-vb" contenteditable></td><th>전 화 번 호<span class="cr"></span></th><td id="f4-vt" contenteditable></td></tr>
+    <tr><th>주 소<span class="cr"></span></th><td colspan="3" id="f4-va" contenteditable></td></tr>
+    <tr><th>입 찰 보 증 금<span class="cr"></span></th><td contenteditable></td><th>면 제 여 부<span class="cr"></span></th><td><select style="width:100%;font-family:inherit;font-size:12px;border:none;background:transparent"><option>해당없음</option><option>면제</option><option>납부</option></select></td></tr>
+  </tbody></table>
+  <div style="margin-top:12px;font-size:12px;line-height:2.0">위와 같이 입찰에 참가하고자 신청합니다.<br><span id="f4-yr"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig"><span>신청인: <span id="f4-vn2" style="display:inline-block;min-width:80px;border-bottom:1px solid #333"></span></span><span style="font-size:13px;font-weight:700" id="f4-sn"></span></div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f4')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f5 -->
+<div id="sec-f5" class="sec">
+<div class="pt">📄 붙임5 — 입찰참가신고서</div>
+<div class="ps">지방계약법 시행규칙 별지 제30호 서식</div>
+<div class="fw">
+  <h2>입 찰 참 가 신 고 서</h2>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">사업자 상호<span class="cr"></span></th><td id="f5-vn" contenteditable></td><th style="width:120px">사업자등록번호<span class="cr"></span></th><td id="f5-vb" contenteditable></td></tr>
+    <tr><th>대 표 자<span class="cr"></span></th><td id="f5-vr" contenteditable></td><th>전 화 번 호<span class="cr"></span></th><td id="f5-vt" contenteditable></td></tr>
+    <tr><th>주 소<span class="cr"></span></th><td colspan="3" id="f5-va" contenteditable></td></tr>
+    <tr><th>입 찰 건 명<span class="cr"></span></th><td colspan="3" id="f5-bid" contenteditable></td></tr>
+    <tr><th>입 찰 금 액<span class="cr"></span></th><td contenteditable>금                원정 (₩              )</td><th>입 찰 일<span class="cr"></span></th><td contenteditable></td></tr>
+  </tbody></table>
+  <div style="margin-top:12px;font-size:12px;line-height:2.0">지방계약법 제13조 규정에 의거 위와 같이 신고합니다.<br><span id="f5-yr"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig"><span>신고인: <span id="f5-vn2" style="display:inline-block;min-width:80px;border-bottom:1px solid #333"></span> (인)</span><span id="f5-sn" style="font-size:13px;font-weight:700"></span></div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f5')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f6 -->
+<div id="sec-f6" class="sec">
+<div class="pt">📄 붙임6 — 납품 제안서</div>
+<div class="fw">
+  <h2>납 품 제 안 서</h2>
+  <div class="fn">업체정보가 자동 반영됩니다.</div>
+  <h3>1. 일반 현황</h3>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">업 체 명<span class="cr"></span></th><td id="f6-vn" contenteditable></td><th style="width:100px">대 표 자<span class="cr"></span></th><td id="f6-vr" contenteditable></td></tr>
+    <tr><th>사업자번호<span class="cr"></span></th><td id="f6-vb" contenteditable></td><th>설 립 연 도<span class="cr"></span></th><td contenteditable></td></tr>
+    <tr><th>주 소<span class="cr"></span></th><td colspan="3" id="f6-va" contenteditable></td></tr>
+    <tr><th>전 화<span class="cr"></span></th><td id="f6-vt" contenteditable></td><th>팩 스<span class="cr"></span></th><td id="f6-vf" contenteditable></td></tr>
+  </tbody></table>
+  <h3>2. 납품 실적 (최근 3년)</h3>
+  <table class="gt"><thead><tr>
+    <th>연도<span class="cr"></span></th><th>학교명<span class="cr"></span></th><th>품 목<span class="cr"></span></th><th>수량(벌)<span class="cr"></span></th><th>금액(원)<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td contenteditable>2024</td><td contenteditable></td><td contenteditable>동복·하복</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>2025</td><td contenteditable></td><td contenteditable>동복·하복</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>2026</td><td contenteditable></td><td contenteditable>동복·하복</td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <h3>3. 납품 실행 계획</h3>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">납품 일정<span class="cr"></span></th><td contenteditable>계약일로부터      일 이내</td></tr>
+    <tr><th>A/S 계획<span class="cr"></span></th><td contenteditable></td></tr>
+    <tr><th>품질 관리<span class="cr"></span></th><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f6')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f7 -->
+<div id="sec-f7" class="sec">
+<div class="pt">📄 붙임7 — 납품 규격서</div>
+<div class="fw">
+  <h2>납 품 (제조) 규 격 서</h2>
+  <div class="fn">셀 클릭으로 직접 편집하세요.</div>
+  <h3>동복</h3>
+  <table class="gt"><thead><tr>
+    <th>품목<span class="cr"></span></th><th>소재(혼용률)<span class="cr"></span></th><th>원산지<span class="cr"></span></th><th>색상<span class="cr"></span></th><th>특이사항<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td>동복 상의(재킷)</td><td contenteditable>폴리에스터 65%·레이온 35%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>동복 하의(바지)</td><td contenteditable>폴리에스터 65%·레이온 35%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>동복 하의(치마)</td><td contenteditable>폴리에스터 65%·레이온 35%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>니트(스웨터)</td><td contenteditable>아크릴 70%·울 30%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>와이셔츠/블라우스</td><td contenteditable>면 100%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <h3>하복</h3>
+  <table class="gt"><thead><tr>
+    <th>품목<span class="cr"></span></th><th>소재(혼용률)<span class="cr"></span></th><th>원산지<span class="cr"></span></th><th>색상<span class="cr"></span></th><th>특이사항<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td>하복 상의</td><td contenteditable>폴리에스터 65%·면 35%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>하복 하의(바지)</td><td contenteditable>폴리에스터 65%·면 35%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>하복 하의(치마)</td><td contenteditable>폴리에스터 65%·면 35%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>셔츠/블라우스</td><td contenteditable>면 100%</td><td contenteditable>국산</td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f7')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f8 -->
+<div id="sec-f8" class="sec">
+<div class="pt">📄 붙임8 — 시설 현황서</div>
+<div class="fw">
+  <h2>시 설 현 황 서</h2>
+  <h3>1. 제조 시설</h3>
+  <table class="gt"><thead><tr>
+    <th>시설명<span class="cr"></span></th><th>수량<span class="cr"></span></th><th>소재지<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td contenteditable>재봉틀(오버로크)</td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>프레스</td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>수쿠이</td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>재단기</td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <h3>2. 판매 시설</h3>
+  <table class="gt"><thead><tr>
+    <th>매장명<span class="cr"></span></th><th>주소<span class="cr"></span></th><th>전화번호<span class="cr"></span></th><th>면적(㎡)<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f8')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f9 -->
+<div id="sec-f9" class="sec">
+<div class="pt">📄 붙임9 — 단가 비율표</div>
+<div class="ps">품목별 비율 합계가 100%가 되도록 입력. 자동 합계 계산.</div>
+<div class="fw">
+  <h2>단 가 비 율 표</h2>
+  <div class="fn">📌 기준: 동복 1벌 금액의 자켓 42%·셔츠18%·니트18%·바지(치마)28% 이내 / 하복 상의47%·하의53% 이내</div>
+  <table class="gt" id="f9t"><thead><tr>
+    <th>구분<span class="cr"></span></th><th>품목<span class="cr"></span></th><th style="width:90px">단가 비율(%)<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td rowspan="5">동복</td><td contenteditable>동복 상의(자켓)</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>42% 이내</td></tr>
+    <tr><td contenteditable>셔츠/블라우스</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>18% 이내</td></tr>
+    <tr><td contenteditable>니트(조끼)</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>18% 이내</td></tr>
+    <tr><td contenteditable>바지/치마</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>28% 이내</td></tr>
+    <tr><td contenteditable>부속품(넥타이·리본)</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>3% 이내(재구매 시)</td></tr>
+    <tr><td rowspan="2">하복</td><td contenteditable>하복 상의</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>47% 이내</td></tr>
+    <tr><td contenteditable>하복 하의(바지/치마)</td><td class="f9r" contenteditable oninput="calcF9()"></td><td contenteditable>53% 이내</td></tr>
+    <tr><td colspan="2" style="text-align:right;font-weight:700;background:#f1f5f9">합 계</td><td id="f9-sum" style="font-weight:700;background:#f1f5f9">0%</td><td></td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f9')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f10 -->
+<div id="sec-f10" class="sec">
+<div class="pt">📄 붙임10 — A/S 계획서</div>
+<div class="fw">
+  <h2>A / S 계 획 서</h2>
+  <table class="gt"><tbody>
+    <tr><th style="width:140px">A/S 기간<span class="cr"></span></th><td contenteditable>납품일로부터 1년 무상 / 이후 2년 유상 (총 3년 품질보증)</td></tr>
+    <tr><th>A/S 장소<span class="cr"></span></th><td id="f10-va" contenteditable></td></tr>
+    <tr><th>A/S 담당자<span class="cr"></span></th><td contenteditable></td></tr>
+    <tr><th>A/S 연락처<span class="cr"></span></th><td id="f10-vt" contenteditable></td></tr>
+    <tr><th>처리 절차<span class="cr"></span></th><td contenteditable>① 불량품 접수 → ② 원인 확인 → ③ 수선 또는 교체 → ④ 반납</td></tr>
+    <tr><th>처리 기간<span class="cr"></span></th><td contenteditable>접수 후 7일 이내</td></tr>
+    <tr><th>교환 기준<span class="cr"></span></th><td contenteditable>봉제·소재·치수 불량 시 무상 교환. 학생 과실은 실비 부담.</td></tr>
+    <tr><th>출장 A/S<span class="cr"></span></th><td contenteditable>방문 수거 서비스 가능 (연 2회 학교 방문 A/S 제공)</td></tr>
+    <tr><th>지정점 폐업 시<span class="cr"></span></th><td contenteditable>폐업 후 1주일 이내 가까운 수선점 재지정하여 학교에 통보</td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f10')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f11 -->
+<div id="sec-f11" class="sec">
+<div class="pt">📄 붙임11 — 소비자 불만 처리 계획</div>
+<div class="fw">
+  <h2>소 비 자 불 만 처 리 계 획</h2>
+  <table class="gt"><thead><tr>
+    <th>불만 유형<span class="cr"></span></th><th>처리 방안<span class="cr"></span></th><th style="width:90px">처리 기한<span class="cr"></span></th><th style="width:70px">담당<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td contenteditable>봉제 불량</td><td contenteditable>무상 수선 또는 교체</td><td contenteditable>7일 이내</td><td contenteditable></td></tr>
+    <tr><td contenteditable>치수 불량</td><td contenteditable>재제작 또는 무상 교체</td><td contenteditable>7일 이내</td><td contenteditable></td></tr>
+    <tr><td contenteditable>색상·디자인 불일치</td><td contenteditable>확인 후 재제작</td><td contenteditable>10일 이내</td><td contenteditable></td></tr>
+    <tr><td contenteditable>원단 불량</td><td contenteditable>교체 처리</td><td contenteditable>7일 이내</td><td contenteditable></td></tr>
+    <tr><td contenteditable>배송 오류</td><td contenteditable>즉시 재배송</td><td contenteditable>3일 이내</td><td contenteditable></td></tr>
+    <tr><td contenteditable>추가구매 거부</td><td contenteditable>계약단가로 즉시 판매</td><td contenteditable>즉시</td><td contenteditable></td></tr>
+    <tr><td contenteditable>불친절 영업행위</td><td contenteditable>담당자 교육·사과</td><td contenteditable>3일 이내</td><td contenteditable></td></tr>
+    <tr><td contenteditable>기타</td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f11')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f12 -->
+<div id="sec-f12" class="sec">
+<div class="pt">📄 붙임12 — 교복 단가 계약서 (수량·금액 자동 계산)</div>
+<div class="ps">수량 × 단가 자동 계산. 셀 클릭으로 편집 가능.</div>
+<div class="fw">
+  <h2>교 복 단 가 계 약 서</h2>
+  <div class="fn">📌 계약 금액은 실제 구매 요청 시 확정됩니다.</div>
+  <table class="gt" id="f12t"><thead><tr>
+    <th style="width:40px">No<span class="cr"></span></th><th>품목<span class="cr"></span></th><th style="width:90px">단가(원)<span class="cr"></span></th><th style="width:70px">수량(벌)<span class="cr"></span></th><th style="width:100px">금액(원)<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td>1</td><td contenteditable>동복 상의(재킷)</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>2</td><td contenteditable>동복 하의(바지)</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>3</td><td contenteditable>동복 하의(치마)</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>4</td><td contenteditable>동복 셔츠/블라우스</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>5</td><td contenteditable>동복 니트(스웨터)</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>6</td><td contenteditable>하복 상의</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>7</td><td contenteditable>하복 하의(바지)</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>8</td><td contenteditable>하복 하의(치마)</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+    <tr><td>9</td><td contenteditable>하복 셔츠/블라우스</td><td class="f12p num" contenteditable oninput="calcF12Row(this)"></td><td class="f12q" contenteditable oninput="calcF12Row(this)"></td><td class="f12a"></td><td contenteditable></td></tr>
+  </tbody><tfoot>
+    <tr><td colspan="4" style="text-align:right;font-weight:700">합 계</td><td id="f12-total" style="font-weight:700"></td><td></td></tr>
+  </tfoot></table>
+  <div style="margin-top:12px;font-size:12px;line-height:2.0">위와 같이 단가 계약을 체결하고 상호 협력할 것을 확인합니다.<br><span id="f12-yr"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig">
+    <span>발주처: <span id="f12-sn" style="font-weight:700"></span> (인)</span>
+    <span>공급자: <span id="f12-vn" style="font-weight:700"></span> (인)</span>
+  </div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f12')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f13 -->
+<div id="sec-f13" class="sec">
+<div class="pt">📄 붙임13 — 개인정보 처리 동의서</div>
+<div class="fw">
+  <h2>개 인 정 보 처 리 동 의 서</h2>
+  <div class="fn">교복 구매 주문 시 수집하는 개인정보에 대한 처리·동의 안내</div>
+  <table class="gt"><tbody>
+    <tr><th style="width:160px">수집·이용 항목<span class="cr"></span></th><td contenteditable>성명, 학교명, 학년·반·번호, 연락처(학생·학부모), 치수 정보</td></tr>
+    <tr><th>수집·이용 목적<span class="cr"></span></th><td contenteditable>교복 제작·납품, A/S 처리, 분실·교환 대응</td></tr>
+    <tr><th>보유·이용 기간<span class="cr"></span></th><td contenteditable>납품 완료 후 1년 보유, 이후 즉시 파기</td></tr>
+    <tr><th>제3자 제공 여부<span class="cr"></span></th><td contenteditable>원칙적으로 제공하지 않음. 다만 법령에 의한 경우 예외.</td></tr>
+    <tr><th>동의 거부 권리<span class="cr"></span></th><td contenteditable>동의를 거부할 권리가 있으나, 거부 시 교복 구매 서비스 이용이 제한될 수 있습니다.</td></tr>
+  </tbody></table>
+  <div style="margin-top:12px;font-size:12px">위 개인정보 수집·이용에 동의합니다.</div>
+  <div class="fsig">
+    <span>학교명: <span id="f13-sn" style="font-weight:700"></span></span>
+    <span>업체명: <span id="f13-vn" style="font-weight:700"></span></span>
+  </div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-f13')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-f14 -->
+<div id="sec-f14" class="sec">
+<div class="pt">📄 붙임14 — 교복 주문서</div>
+<div class="ps">학생별 사이즈 주문 서식. 행 추가 가능.</div>
+<div class="fw">
+  <h2>교 복 주 문 서</h2>
+  <div style="margin-bottom:6px;font-size:12px">학교명: <span id="f14-sn" style="font-weight:700;min-width:80px;display:inline-block"></span>&nbsp;&nbsp;학년·반: <span contenteditable style="min-width:60px;border-bottom:1px solid #aaa;display:inline-block"></span></div>
+  <table class="gt" id="f14t"><thead><tr>
+    <th style="width:30px">No<span class="cr"></span></th><th style="width:60px">성명<span class="cr"></span></th><th>동복 상의<span class="cr"></span></th><th>동복 하의<span class="cr"></span></th><th>셔츠/블라우스<span class="cr"></span></th><th>하복 상의<span class="cr"></span></th><th>하복 하의<span class="cr"></span></th><th style="width:80px">비고<span class="cr"></span></th>
+  </tr></thead><tbody id="f14body">
+    <tr><td>1</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>2</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>3</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>4</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>5</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow">
+    <button class="btn" onclick="addDlRow()">+ 행 추가</button>
+    <button class="btn bp" onclick="PF('sec-f14')">🖨️ 인쇄</button>
+  </div>
+</div>
+</div>
+
+<!-- sec-ck -->
+<div id="sec-ck" class="sec">
+<div class="pt">✅ 검사·검수 체크리스트</div>
+<div class="ps">납품 시 실물 확인 항목. 클릭으로 체크/해제.</div>
+<div class="fw">
+  <h2>검 사 · 검 수 체 크 리 스 트</h2>
+  <div class="fn">납품일: <span id="ck-ddt" style="font-weight:700;min-width:80px;display:inline-block"></span>&nbsp;&nbsp;학교명: <span id="ck-sn" style="font-weight:700;min-width:80px;display:inline-block"></span></div>
+  <table class="gt"><thead><tr>
+    <th style="width:40px">확인<span class="cr"></span></th><th>점검 항목<span class="cr"></span></th><th style="width:80px">결과<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>납품 수량이 계약 수량과 일치하는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>품목(동복·하복 구분)이 계약 내용과 일치하는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>원단 혼용률이 납품규격서 기준을 충족하는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>봉제 상태(솔기, 단추, 지퍼 등)가 양호한가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>치수표가 정확하게 부착되어 있는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>학교 로고·자수가 계약 내용과 일치하는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>색상이 계약서 샘플과 동일한가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>KC인증(어린이제품 안전기준) 라벨이 부착되어 있는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>세탁 표시 라벨이 부착되어 있는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>포장 상태가 양호한가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>납품서(거래명세서)가 첨부되어 있는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+    <tr><td class="ck-cb" onclick="this.classList.toggle('chk')">□</td><td>납품 지연 없이 기한 내 납품되었는가?</td><td contenteditable>양호/불량</td><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-ck')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-dl -->
+<div id="sec-dl" class="sec">
+<div class="pt">📦 최종 납품 확인서</div>
+<div class="fw">
+  <h2>최 종 납 품 확 인 서</h2>
+  <table class="gt"><tbody>
+    <tr><th style="width:130px">학 교 명<span class="cr"></span></th><td id="dl-sn" contenteditable></td><th style="width:100px">납 품 일<span class="cr"></span></th><td id="dl-ddt" contenteditable></td></tr>
+    <tr><th>업 체 명<span class="cr"></span></th><td id="dl-vn" contenteditable></td><th>대 표 자<span class="cr"></span></th><td id="dl-vr" contenteditable></td></tr>
+    <tr><th>계 약 건 명<span class="cr"></span></th><td colspan="3" id="dl-bid" contenteditable></td></tr>
+  </tbody></table>
+  <h3>납품 내역</h3>
+  <table class="gt" id="dlt"><thead><tr>
+    <th>품목<span class="cr"></span></th><th style="width:80px">계약 수량<span class="cr"></span></th><th style="width:80px">납품 수량<span class="cr"></span></th><th style="width:80px">단가(원)<span class="cr"></span></th><th style="width:100px">금액(원)<span class="cr"></span></th><th>비고<span class="cr"></span></th>
+  </tr></thead><tbody id="dlbody">
+    <tr><td contenteditable>동복 상의</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>동복 하의(바지)</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>동복 하의(치마)</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>하복 상의</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>하복 하의(바지)</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td contenteditable>하복 하의(치마)</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <div class="brow">
+    <button class="btn" onclick="addDlRow()">+ 행 추가</button>
+    <button class="btn bp" onclick="PF('sec-dl')">🖨️ 인쇄</button>
+  </div>
+  <div style="margin-top:16px;font-size:12px;line-height:2.0">위와 같이 교복 납품이 완료되었음을 확인합니다.<br><span id="dl-yr"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig">
+    <span>확인자(학교): <span id="dl-sn2" style="font-weight:700"></span> (인)</span>
+    <span>납품자(업체): <span id="dl-vn2" style="font-weight:700"></span> (인)</span>
+  </div>
+</div>
+</div>
+
+<!-- sec-pp -->
+<div id="sec-pp" class="sec">
+<div class="pt">🔒 개인정보 파기 서약서</div>
+<div class="fw">
+  <h2>개 인 정 보 파 기 서 약 서</h2>
+  <p style="font-size:12px;line-height:1.8;margin:0 0 12px">본 서약서는 <span id="pp-sn" style="font-weight:700"></span>(이하 "갑")과 <span id="pp-vn" style="font-weight:700"></span>(이하 "을") 간 체결된 교복 구매 계약과 관련하여 수집된 개인정보의 파기 의무를 확인하기 위해 작성됩니다.</p>
+  <table class="gt"><tbody>
+    <tr><th style="width:150px">파기 대상 정보<span class="cr"></span></th><td contenteditable>학생 개인정보(성명, 학년·반·번호, 치수, 연락처 등) 일체</td></tr>
+    <tr><th>파기 시기<span class="cr"></span></th><td contenteditable>납품 완료 후 1년 이내 (계약 목적 달성 시)</td></tr>
+    <tr><th>파기 방법<span class="cr"></span></th><td contenteditable>전자파일: 복구 불가능한 방법으로 영구삭제 / 종이문서: 파쇄·소각</td></tr>
+    <tr><th>파기 확인<span class="cr"></span></th><td contenteditable>파기 완료 후 파기확인서를 학교에 제출</td></tr>
+    <tr><th>위반 시 조치<span class="cr"></span></th><td contenteditable>개인정보보호법 위반에 따른 법적 제재를 감수함</td></tr>
+  </tbody></table>
+  <div style="margin-top:16px;font-size:12px;line-height:2.0">위 사항을 준수할 것을 서약합니다.<br><span id="pp-yr"></span>년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일</div>
+  <div class="fsig">
+    <span>갑(학교): <span id="pp-sn2" style="font-weight:700"></span> (인)</span>
+    <span>을(업체): <span id="pp-vn2" style="font-weight:700"></span> 대표 <span id="pp-vr" style="font-weight:700"></span> (인)</span>
+  </div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-pp')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-sv -->
+<div id="sec-sv" class="sec">
+<div class="pt">📊 만족도 조사 설문지</div>
+<div class="ps">납품 후 학생·학부모 대상 만족도 조사</div>
+<div class="fw">
+  <h2>교복 구매 만족도 조사</h2>
+  <div class="fn">학교명: <span id="sv-sn" style="font-weight:700"></span>&nbsp;&nbsp;업체명: <span id="sv-vn" style="font-weight:700"></span></div>
+  <table class="gt"><thead><tr>
+    <th>항목<span class="cr"></span></th><th style="width:70px">매우만족<span class="cr"></span></th><th style="width:70px">만족<span class="cr"></span></th><th style="width:70px">보통<span class="cr"></span></th><th style="width:70px">불만족<span class="cr"></span></th><th style="width:80px">매우불만족<span class="cr"></span></th>
+  </tr></thead><tbody>
+    <tr><td>①교복의 품질(원단·봉제) 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>②교복 디자인 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>③납품 기한 준수 여부</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>④치수 정확도 및 핏 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>⑤업체 응대 태도 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>⑥A/S 처리 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>⑦가격 대비 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+    <tr><td>⑧전반적인 만족도</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+  </tbody></table>
+  <div style="margin-top:10px">
+    <div style="font-weight:600;font-size:13px;margin-bottom:4px">개선 의견 및 건의사항</div>
+    <div contenteditable style="border:1px solid var(--bd);border-radius:4px;min-height:60px;padding:8px;font-size:13px"></div>
+  </div>
+  <div class="brow"><button class="btn bp" onclick="PF('sec-sv')">🖨️ 인쇄</button></div>
+</div>
+</div>
+
+<!-- sec-faq -->
+<div id="sec-faq" class="sec">
+<div class="pt">❓ 자주 묻는 질문 (FAQ)</div>
+<div class="ps">클릭하면 답변이 펼쳐집니다.</div>
+<div style="max-width:800px">
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 2단계경쟁 입찰 방식과 최저가 낙찰의 차이는 무엇인가요?</div>
+    <div class="faq-a">2단계경쟁은 ①1단계에서 입찰참가신청·적격심사(납품실적·시설·A/S 등)를 통해 적격업체를 선정하고, ②2단계에서 해당 업체들을 대상으로 가격경쟁을 실시하는 방식입니다. 최저가낙찰과 달리 품질·역량이 검증된 업체만 가격 경쟁에 참여하므로 저품질 납품 위험이 줄어듭니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 기초금액은 어떻게 산정하나요?</div>
+    <div class="faq-a">3개 이상 업체로부터 견적서를 징구하여 평균값을 기초금액으로 설정합니다. 기초금액 조서 서식(붙임3)을 활용하여 견적가 3개를 입력하면 자동으로 평균이 계산됩니다. 기초금액은 예정가격 산정 기준이 되므로 정확하게 작성해야 합니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 입찰공고 기간은 얼마나 되어야 하나요?</div>
+    <div class="faq-a">지방계약법 시행령에 따라 추정가격 1억원 이상은 40일 이상, 5천만원 이상~1억원 미만은 20일 이상, 5천만원 미만은 10일 이상 공고해야 합니다. 단, 긴급입찰의 경우 5일 이상으로 단축 가능합니다. 나라장터(G2B)에 공고해야 하며, 학교 홈페이지에도 게시가 권장됩니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 적격업체 선정 평가표 A~D형 중 어떤 것을 써야 하나요?</div>
+    <div class="faq-a">가이드북 기준으로 A형(표준형·일반 중소도시), B형(대도시·경쟁 활발), C형(소규모 학교·농어촌), D형(재입찰·특수상황) 등으로 구분됩니다. 학교의 학생 수, 지역 여건, 업체 경쟁 환경 등을 고려하여 학교운영위원회 심의를 거쳐 선택하세요.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 교복 구매 시 중소기업자 간 경쟁 제도 적용을 받나요?</div>
+    <div class="faq-a">네. 교복(학생복)은 중소기업제품 구매촉진 및 판로지원에 관한 법률에 따른 중소기업자 간 경쟁 품목에 해당할 수 있습니다. 해당 여부는 중소벤처기업부 공고를 확인하고, 해당 시 중소기업자만 입찰에 참가할 수 있도록 공고문에 명시해야 합니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 계약 후 업체가 도산하면 어떻게 하나요?</div>
+    <div class="faq-a">계약특수조건에 따라 계약 상대방은 계약 이행 불능 시 학교에 즉시 통보해야 하며, 계약보증금(계약금액의 10% 이상)을 납부했다면 해당 금액을 귀속시킬 수 있습니다. 또한 계약해제 후 재입찰을 실시해야 하며, 피해 학생 구제를 위한 긴급조치를 취해야 합니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 단가 비율표(붙임9)에서 합계가 100%를 초과하면 안 되나요?</div>
+    <div class="faq-a">동복 전체와 하복 전체 각각의 합계는 100%가 되어야 하며, 각 품목별로 가이드북에서 정한 상한 비율(예: 자켓 42%, 셔츠 18%)을 초과하면 안 됩니다. 이를 초과하는 경우 검수 기준 위반으로 계약 특수조건 위반에 해당할 수 있습니다.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="TF(this)">Q. 나라장터(G2B)에 입찰공고를 어떻게 등록하나요?</div>
+    <div class="faq-a">① 나라장터(www.g2b.go.kr) 로그인 → ② 입찰공고 등록 메뉴 → ③ 입찰공고문·서류 업로드 → ④ 공고번호 확인. 공고문 자동화 서식(입찰공고문 섹션)을 활용하면 필수 항목을 빠짐없이 작성할 수 있습니다. 등록 후 공고번호를 학교 홈페이지에도 함께 안내하세요.</div>
+  </div>
+</div>
+</div>
+
+</div><!-- #main -->
+</div><!-- #layout -->
+
+<script>
+// ── Global state ──────────────────────────────────────────────
+var G = {};
+function numFmt(el){
+  var raw=(el.value||'').replace(/[^0-9]/g,'');
+  el.dataset.raw=raw;
+  if(!raw){el.value='';return;}
+  var fmt=Number(raw).toLocaleString('ko-KR');
+  if(el.value!==fmt){
+    var pos=el.selectionStart,oldLen=el.value.length;
+    el.value=fmt;
+    var diff=fmt.length-oldLen;
+    try{el.setSelectionRange(pos+diff,pos+diff);}catch(e){}
+  }
+}
+function numRaw(el){
+  return el&&el.dataset.raw?el.dataset.raw:(el?(el.value||'').replace(/[^0-9]/g,''):'');
+}
+function gv(id){ return (document.getElementById(id)||{}).value||''; }
+
+function SA(){
+  G = {
+    sn:gv('g-sn'), yr:gv('g-yr'), pr:gv('g-pr'),
+    addr:gv('g-addr'), tel:gv('g-tel'), fax:gv('g-fax'),
+    edu:gv('g-edu'), bid:gv('g-bid'), tc:gv('g-tc'),
+    cnt:gv('g-cnt'), bdt:gv('g-bdt'), ddt:gv('g-ddt'), ddt2:gv('g-ddt2'),
+    base1:numRaw(document.getElementById('g-base1')), base2:numRaw(document.getElementById('g-base2')),
+    vn:gv('g-vn'), vr:gv('g-vr'), vb:gv('g-vb'),
+    va:gv('g-va'), vt:gv('g-vt'), vf:gv('g-vf'),
+    vc:gv('g-vc'), vcd:gv('g-vcd'), vp:gv('g-vp')
+  };
+  syncForms();
+}
+
+function setT(id,v){ var e=document.getElementById(id); if(e&&!e._edited)e.textContent=v; }
+function setVal(id,v){ var e=document.getElementById(id); if(e)e.value=v; }
+function setIn(id,v){ var e=document.getElementById(id); if(e&&!e._edited)e.innerText=v; }
+
+function syncForms(){
+  // sec-base
+  setT('base-bid',G.bid); setT('base-yr',G.yr); setT('base-sn',G.sn);
+  // sec-bid
+  setT('bid-title',G.bid+' 입찰공고'); setT('bid-yr',G.yr); setT('bid-sn1',G.sn);
+  setT('bid-bidname',G.bid); setT('bid-cnt',G.cnt); setT('bid-base',G.base1||G.base2);
+  setT('bid-snaddr',G.addr); setT('bid-snaddr2',G.addr);
+  setT('bid-ddt',G.ddt); setT('bid-ddt2',G.ddt2); setT('bid-sn2',G.sn);
+  // sec-eval
+  setT('eval-sn',G.sn);
+  // sec-special
+  setT('sp-title',G.bid+' 계약 특수조건');
+  setT('sp-sn',G.sn); setT('sp-yr',G.yr); setT('sp-sn2',G.sn);
+  setT('sp-vn',G.vn); setT('sp-vr',G.vr);
+  setT('sp-ddt',G.ddt); setT('sp-ddt2',G.ddt2);
+  setT('sp-sn3',G.sn); setT('sp-pr',G.pr);
+  setT('sp-vn2',G.vn); setT('sp-vr2',G.vr); setT('sp-yr2',G.yr);
+  setT('sp-court',G.addr.split(' ').slice(0,1).join('')+' 지방법원');
+  // sec-pubdoc
+  setT('docA-yr',G.yr); setT('docA-sn',G.sn); setT('docA-bid',G.bid);
+  setT('docA-yr2',G.yr); setT('docA-sn2',G.sn);
+  setT('docB-yr',G.yr); setT('docB-sn',G.sn);
+  setT('docC-yr',G.yr); setT('docC-sn',G.sn);
+  setT('docD-bid',G.bid); setT('docD-vn',G.vn);
+  setT('docD-ddt',G.ddt); setT('docD-ddt2',G.ddt2);
+  // sec-f4
+  setT('f4-bid',G.bid); setT('f4-vn',G.vn); setT('f4-vr',G.vr);
+  setT('f4-vb',G.vb); setT('f4-vt',G.vt); setT('f4-va',G.va);
+  setT('f4-yr',G.yr); setT('f4-vn2',G.vn); setT('f4-sn',G.sn);
+  // sec-f5
+  setT('f5-vn',G.vn); setT('f5-vr',G.vr); setT('f5-vb',G.vb);
+  setT('f5-vt',G.vt); setT('f5-va',G.va); setT('f5-bid',G.bid);
+  setT('f5-yr',G.yr); setT('f5-vn2',G.vn); setT('f5-sn',G.sn);
+  // sec-f6
+  setT('f6-vn',G.vn); setT('f6-vr',G.vr); setT('f6-vb',G.vb);
+  setT('f6-va',G.va); setT('f6-vt',G.vt); setT('f6-vf',G.vf);
+  // sec-f10
+  setT('f10-va',G.va); setT('f10-vt',G.vt);
+  // sec-f12
+  setT('f12-yr',G.yr); setT('f12-sn',G.sn); setT('f12-vn',G.vn);
+  // sec-f13
+  setT('f13-sn',G.sn); setT('f13-vn',G.vn);
+  // sec-f14
+  setT('f14-sn',G.sn);
+  // sec-ck
+  setT('ck-ddt',G.ddt); setT('ck-sn',G.sn);
+  // sec-dl
+  setT('dl-sn',G.sn); setT('dl-ddt',G.ddt); setT('dl-vn',G.vn);
+  setT('dl-vr',G.vr); setT('dl-bid',G.bid); setT('dl-yr',G.yr);
+  setT('dl-sn2',G.sn); setT('dl-vn2',G.vn);
+  // sec-pp
+  setT('pp-sn',G.sn); setT('pp-vn',G.vn); setT('pp-yr',G.yr);
+  setT('pp-sn2',G.sn); setT('pp-vn2',G.vn); setT('pp-vr',G.vr);
+  // sec-sv
+  setT('sv-sn',G.sn); setT('sv-vn',G.vn);
+}
+
+// ── Contenteditable edited flag ───────────────────────────────
+document.addEventListener('input',function(e){
+  if(e.target.contentEditable==='true') e.target._edited=true;
+});
+
+// ── Navigation ────────────────────────────────────────────────
+function showSec(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.style.display='none';});
+  var el=document.getElementById('sec-'+id)||document.getElementById(id);
+  if(el){el.style.display='block'; el.scrollIntoView({behavior:'smooth',block:'start'});}
+  document.querySelectorAll('.ni').forEach(function(li){
+    li.classList.toggle('act', li.dataset.s===id || li.dataset.s===id.replace('sec-',''));
+  });
+}
+
+// ── Sidebar group toggle ──────────────────────────────────────
+function TC(hdr){
+  hdr.classList.toggle('op');
+  var cb=hdr.nextElementSibling;
+  if(cb) cb.classList.toggle('op');
+}
+
+// ── FAQ toggle ────────────────────────────────────────────────
+function TF(el){
+  el.classList.toggle('op');
+  var a=el.nextElementSibling;
+  if(!a) return;
+  a.style.display = a.style.display==='block'?'none':'block';
+}
+
+// ── Tab switching ─────────────────────────────────────────────
+function showTab(tabEl, contentId){
+  var bar=tabEl.closest('.tab-bar');
+  if(bar) bar.querySelectorAll('.tab').forEach(function(t){t.classList.remove('act');});
+  tabEl.classList.add('act');
+  var sec=tabEl.closest('.sec')||tabEl.closest('.fw')||document;
+  sec.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('act');});
+  var tc=document.getElementById(contentId);
+  if(tc) tc.classList.add('act');
+}
+
+// ── Calculations ──────────────────────────────────────────────
+function calcBase(){
+  ['동','하'].forEach(function(t){
+    var ids=t==='동'?['est-d1','est-d2','est-d3']:['est-h1','est-h2','est-h3'];
+    var vals=ids.map(function(id){
+      var e=document.getElementById(id); return e?parseFloat(numRaw(e))||0:0;
+    });
+    var avg=vals[0]&&vals[1]&&vals[2]?Math.round((vals[0]+vals[1]+vals[2])/3):0;
+    var el=document.getElementById(t==='동'?'est-davg':'est-havg');
+    if(el) el.value=avg?avg.toLocaleString('ko-KR'):'';
+  });
+}
+
+function calcF9(){
+  var cells=document.querySelectorAll('.f9r');
+  var sum=0;
+  cells.forEach(function(c){
+    var v=parseFloat(c.textContent)||0;
+    sum+=v;
+  });
+  var el=document.getElementById('f9-sum');
+  if(el) el.textContent=sum.toFixed(1)+'%';
+}
+
+function calcF12Row(cell){
+  var tr=cell.closest('tr');
+  if(!tr) return;
+  var pc=(tr.querySelector('.f12p')||{}).textContent||'';
+  var qc=(tr.querySelector('.f12q')||{}).textContent||'';
+  // auto-format commas while typing
+  if(cell.classList.contains('f12p')||cell.classList.contains('f12q')){
+    var raw=pc.replace(/[^0-9]/g,'');
+    if(cell.classList.contains('f12p')) raw=(cell.textContent||'').replace(/[^0-9]/g,'');
+    else raw=(cell.textContent||'').replace(/[^0-9]/g,'');
+    if(raw){var sel=window.getSelection(),pos=sel.focusOffset;
+      cell.textContent=Number(raw).toLocaleString('ko-KR');
+      try{var range=document.createRange();range.setStart(cell.firstChild,Math.min(pos+(cell.textContent.length-raw.length),cell.textContent.length));range.collapse(true);sel.removeAllRanges();sel.addRange(range);}catch(e){}
+    }
+  }
+  var p=parseFloat((tr.querySelector('.f12p')||{}).textContent.replace(/,/g,''))||0;
+  var q=parseFloat((tr.querySelector('.f12q')||{}).textContent.replace(/,/g,''))||0;
+  var a=tr.querySelector('.f12a');
+  if(a) a.textContent=(p&&q)?(p*q).toLocaleString('ko-KR'):'';
+  calcF12();
+}
+
+function calcF12(){
+  var total=0;
+  document.querySelectorAll('#f12t .f12a').forEach(function(c){
+    total+=parseFloat((c.textContent||'').replace(/,/g,''))||0;
+  });
+  var el=document.getElementById('f12-total');
+  if(el) el.textContent=total?total.toLocaleString()+'원':'';
+}
+
+// ── Row adding ────────────────────────────────────────────────
+function addDlRow(){
+  var tbody=document.getElementById('dlbody')||document.getElementById('f14body');
+  if(!tbody) return;
+  var rows=tbody.querySelectorAll('tr');
+  var n=rows.length+1;
+  var cols=rows[0]?rows[0].querySelectorAll('td').length:6;
+  var tr=document.createElement('tr');
+  for(var i=0;i<cols;i++){
+    var td=document.createElement('td');
+    td.contentEditable='true';
+    if(i===0) td.textContent=n;
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+}
+
+function addDocBRow(){
+  var tbody=document.getElementById('docBbody');
+  if(!tbody) return;
+  var n=tbody.querySelectorAll('tr').length+1;
+  var tr=document.createElement('tr');
+  [String(n),'','','',''].forEach(function(v){
+    var td=document.createElement('td');
+    td.contentEditable='true'; td.textContent=v;
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+
+// ── Print ─────────────────────────────────────────────────────
+function PF(secId){
+  var el=document.getElementById(secId);
+  if(!el) return;
+  var win=window.open('','_blank','width=900,height=700');
+  win.document.write('<html><head><meta charset="utf-8"><title>인쇄</title><style>');
+  win.document.write('@page{size:A4;margin:20mm 15mm}');
+  win.document.write('body{font-family:"맑은 고딕","Malgun Gothic",sans-serif;font-size:12px;color:#111}');
+  win.document.write('table{width:100%;border-collapse:collapse;margin:8px 0}');
+  win.document.write('th,td{border:1px solid #444;padding:5px 8px;vertical-align:middle}');
+  win.document.write('th{background:#f1f5f9;font-weight:600}');
+  win.document.write('h2{text-align:center;font-size:16px;margin:12px 0 10px;letter-spacing:4px}');
+  win.document.write('h3{font-size:13px;margin:14px 0 4px;border-left:3px solid #1a56db;padding-left:6px}');
+  win.document.write('.brow,.btn,.cr{display:none}');
+  win.document.write('.ck-cb.chk{color:#1a56db;font-weight:700}');
+  win.document.write('.tab-content{display:block!important}');
+  win.document.write('.tab-bar{display:none}');
+  win.document.write('.fsig{display:flex;justify-content:space-between;margin-top:16px;font-size:12px}');
+  win.document.write('</style></head><body>');
+  win.document.write(el.querySelector('.fw')?el.querySelector('.fw').innerHTML:el.innerHTML);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.focus();
+  setTimeout(function(){win.print();},400);
+}
+
+// ── Column resize ─────────────────────────────────────────────
+function makeResizable(tbl){
+  var ths=tbl.querySelectorAll('th');
+  ths.forEach(function(th){
+    var cr=th.querySelector('.cr');
+    if(!cr) return;
+    var startX,startW;
+    cr.addEventListener('mousedown',function(e){
+      startX=e.clientX; startW=th.offsetWidth;
+      e.preventDefault();
+      function mm(e2){ th.style.width=(startW+e2.clientX-startX)+'px'; }
+      function mu(){ document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); }
+      document.addEventListener('mousemove',mm);
+      document.addEventListener('mouseup',mu);
+    });
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  // Hide all sections except first visible
+  document.querySelectorAll('.sec').forEach(function(s){s.style.display='none';});
+  showSec('sec-info');
+
+  // Mark all g- inputs as auto-sync
+  document.querySelectorAll('[id^="g-"]').forEach(function(el){
+    el.addEventListener('input', SA);
+  });
+
+  // Make tables resizable
+  document.querySelectorAll('table.gt').forEach(makeResizable);
+
+  // Mark all contenteditable as tracking edits + .num 쉼표 포맷
+  document.querySelectorAll('[contenteditable]').forEach(function(el){
+    el.addEventListener('blur',function(){this._edited=!!this.textContent.trim();});
+    if(el.classList.contains('num')){
+      el.addEventListener('input',function(){
+        var raw=(this.textContent||'').replace(/[^0-9]/g,'');
+        if(!raw)return;
+        var fmt=Number(raw).toLocaleString('ko-KR');
+        if(this.textContent!==fmt){
+          var sel=window.getSelection(),node=sel.focusNode,off=sel.focusOffset;
+          this.textContent=fmt;
+          try{var r=document.createRange();
+            r.setStart(this.firstChild||this,Math.min(off+(fmt.length-raw.length),fmt.length));
+            r.collapse(true);sel.removeAllRanges();sel.addRange(r);}catch(e){}
+        }
+      });
+    }
+  });
+
+  // Wire nav click handlers
+  document.querySelectorAll('.ni').forEach(function(el){
+    el.addEventListener('click', function(){
+      var s=this.dataset.s;
+      if(s) showSec(s);
+    });
+  });
+});
+</script>
+</body>
+</html>
